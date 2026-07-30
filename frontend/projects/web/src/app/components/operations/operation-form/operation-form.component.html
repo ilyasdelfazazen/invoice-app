@@ -1,0 +1,73 @@
+<div class="page">
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text"
+            (click)="router.navigate(['/operations'])"></button>
+    <h2>{{ (isEdit ? 'operations.editOperation' : 'operations.newOperation') | translate }}</h2>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+
+        <div class="field col-span-2">
+          <label>{{ 'operations.name' | translate }} *</label>
+          <input pInputText formControlName="name" class="w-full"
+                 [class.ng-invalid]="form.get('name')?.invalid && form.get('name')?.touched" />
+        </div>
+
+        <div class="field">
+          <label>{{ 'operations.date' | translate }} *</label>
+          <p-calendar formControlName="date" dateFormat="dd/mm/yy" styleClass="w-full"
+                      [class.ng-invalid]="form.get('date')?.invalid && form.get('date')?.touched">
+          </p-calendar>
+        </div>
+
+        <div class="field">
+          <label>{{ 'operations.status' | translate }}</label>
+          <p-dropdown formControlName="status"
+                      [options]="[{label: 'Ouvert', value: 'open'}, {label: 'Payé', value: 'paid'}]"
+                      optionLabel="label" optionValue="value" styleClass="w-full">
+          </p-dropdown>
+        </div>
+
+        <div class="field">
+          <label>{{ 'operations.amount' | translate }} *</label>
+          <p-inputNumber formControlName="amount" mode="decimal" [minFractionDigits]="2"
+                         styleClass="w-full"
+                         [class.ng-invalid]="form.get('amount')?.invalid && form.get('amount')?.touched">
+          </p-inputNumber>
+        </div>
+
+        <div class="field col-span-2">
+          <label>{{ 'operations.context' | translate }}</label>
+          <textarea pInputTextarea formControlName="context" rows="3" class="w-full"></textarea>
+        </div>
+
+        <div class="field col-span-2">
+          <label>{{ 'operations.category' | translate }}</label>
+          <div class="category-btn-group">
+            <button type="button" class="category-btn"
+                    [class.active]="form.get('category')?.value === 'business'"
+                    (click)="form.get('category')?.setValue('business')">
+              <i class="pi pi-briefcase"></i> {{ 'operations.business' | translate }}
+            </button>
+            <button type="button" class="category-btn"
+                    [class.active]="form.get('category')?.value === 'personal'"
+                    (click)="form.get('category')?.setValue('personal')">
+              <i class="pi pi-user"></i> {{ 'operations.personal' | translate }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button pButton type="button" [label]="'common.cancel' | translate"
+                class="p-button-outlined"
+                (click)="router.navigate(['/operations'])"></button>
+        <button pButton type="submit" [label]="'common.save' | translate"
+                [loading]="saving"></button>
+      </div>
+    </form>
+  </div>
+</div>

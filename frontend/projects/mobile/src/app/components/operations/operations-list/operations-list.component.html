@@ -1,0 +1,121 @@
+<div class="page">
+  <div class="page-header">
+    <ion-icon name="wallet-outline" class="section-icon"></ion-icon>
+    <h2>{{ 'nav.operations' | translate }}</h2>
+    <ion-button size="small" (click)="router.navigate(['/operations/new'])">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      {{ 'operations.newOperation' | translate }}
+    </ion-button>
+  </div>
+
+  <ion-searchbar
+    [formControl]="searchControl"
+    [placeholder]="'common.search' | translate"
+    debounce="0">
+  </ion-searchbar>
+
+  <div class="filter-row">
+    <ion-select [(ngModel)]="statusFilter" (ionChange)="onFilterChange()"
+                interface="action-sheet"
+                [placeholder]="'operations.allStatuses' | translate"
+                class="filter-select">
+      <ion-select-option value="">{{ 'operations.allStatuses' | translate }}</ion-select-option>
+      <ion-select-option value="open">{{ 'operations.status_open' | translate }}</ion-select-option>
+      <ion-select-option value="paid">{{ 'operations.status_paid' | translate }}</ion-select-option>
+    </ion-select>
+
+    <ion-select [(ngModel)]="categoryFilter" (ionChange)="onFilterChange()"
+                interface="action-sheet"
+                [placeholder]="'operations.allCategories' | translate"
+                class="filter-select">
+      <ion-select-option value="">{{ 'operations.allCategories' | translate }}</ion-select-option>
+      <ion-select-option value="personal">{{ 'operations.personal' | translate }}</ion-select-option>
+      <ion-select-option value="business">{{ 'operations.business' | translate }}</ion-select-option>
+    </ion-select>
+  </div>
+
+  <div class="sort-bar">
+    <button class="sort-btn" [class.active]="sortName !== ''" (click)="toggleSortName()">
+      {{ 'operations.name' | translate }}
+      <ion-icon [name]="sortName === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+    <button class="sort-btn" [class.active]="sortPrice !== ''" (click)="toggleSortPrice()">
+      MAD
+      <ion-icon [name]="sortPrice === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+  </div>
+
+  <div class="date-row">
+    <ion-input type="date" [(ngModel)]="dateFrom" (ionChange)="onDateChange()"
+               class="date-input" [placeholder]="'common.dateFrom' | translate"></ion-input>
+    <span class="date-sep">→</span>
+    <ion-input type="date" [(ngModel)]="dateTo" (ionChange)="onDateChange()"
+               class="date-input" [placeholder]="'common.dateTo' | translate"></ion-input>
+    <ion-button *ngIf="dateFrom || dateTo" fill="clear" size="small" color="medium" (click)="clearDates()">
+      <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Select all bar -->
+  <div class="select-bar" *ngIf="!loading && displayed.length > 0">
+    <ion-checkbox [checked]="allSelected" (ionChange)="toggleSelectAll()" class="select-all-check"></ion-checkbox>
+    <span class="select-all-label">
+      {{ selectedOps.length > 0 ? selectedOps.length + ' ' + ('common.selected' | translate) : ('common.selectAll' | translate) }}
+    </span>
+  </div>
+
+  <div *ngIf="loading">
+    <ion-skeleton-text *ngFor="let i of [1,2,3,4,5]" animated
+                       style="height: 60px; margin-bottom: 8px; border-radius: 8px;"></ion-skeleton-text>
+  </div>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let op of displayed" detail="false" (click)="router.navigate(['/operations', op._id])">
+      <ion-checkbox slot="start"
+                    [checked]="isSelected(op)"
+                    (ionChange)="toggleSelect(op)"
+                    (click)="$event.stopPropagation()"
+                    class="op-check">
+      </ion-checkbox>
+      <ion-label>
+        <h2>{{ op.name }}</h2>
+        <p>{{ op.date | date:'dd/MM/yyyy' }}</p>
+        <p>
+          <ion-badge [color]="statusColor(op.status)">
+            {{ ('operations.status_' + op.status) | translate }}
+          </ion-badge>
+        </p>
+        <p class="cat-row">
+          <span class="op-cat-icon-inline">
+            <ion-icon [name]="op.category === 'personal' ? 'person-outline' : 'briefcase-outline'"></ion-icon>
+          </span>
+        </p>
+      </ion-label>
+      <div slot="end" class="op-end">
+        <span class="amount-note">{{ op.amount | number:'1.2-2' }} MAD</span>
+        <div class="row-actions">
+          <ion-button *ngIf="op.status === 'open'" fill="clear" size="small" color="success" (click)="$event.stopPropagation(); markAsPaid(op)">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" (click)="$event.stopPropagation(); router.navigate(['/operations', op._id, 'edit'])">
+            <ion-icon name="pencil-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" color="danger" (click)="$event.stopPropagation(); confirmDelete(op)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-item>
+
+    <ion-item *ngIf="displayed.length === 0">
+      <ion-icon slot="start" name="search-outline" color="medium"></ion-icon>
+      <ion-label class="ion-text-center text-muted">{{ 'common.noData' | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Floating export button -->
+  <div class="export-fab" *ngIf="selectedOps.length > 0" [class.disabled]="exportingPdf" (click)="!exportingPdf && exportPdf()">
+    <ion-icon [name]="exportingPdf ? 'reload-outline' : 'download-outline'"></ion-icon>
+    {{ 'operations.exportPdf' | translate }} ({{ selectedOps.length }})
+  </div>
+</div>

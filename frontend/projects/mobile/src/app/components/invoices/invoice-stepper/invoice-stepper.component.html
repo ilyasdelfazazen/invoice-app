@@ -1,0 +1,250 @@
+<ion-page>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button fill="clear" (click)="router.navigate(['/invoices'])">
+          <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>{{ 'invoices.newInvoice' | translate }}</ion-title>
+    </ion-toolbar>
+
+    <!-- Step indicator -->
+    <ion-toolbar class="step-toolbar">
+      <div class="step-indicator">
+        <div class="step-item" *ngFor="let step of steps; let i = index" [class.active]="i === currentStep" [class.done]="i < currentStep">
+          <div class="step-dot">{{ i + 1 }}</div>
+          <span class="step-label">{{ step }}</span>
+        </div>
+      </div>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content [scrollY]="false">
+    <div class="scroll-wrapper">
+
+    <!-- STEP 0: Client & Header -->
+    <div [hidden]="currentStep !== 0">
+      <div class="slide-content ion-padding">
+        <form [formGroup]="headerForm">
+
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.client' | translate }} *</ion-label>
+              <ion-select formControlName="client_id" interface="action-sheet"
+                          [placeholder]="'invoices.selectClient' | translate"
+                          [class.ion-invalid]="headerForm.get('client_id')?.invalid && headerForm.get('client_id')?.touched">
+                <ion-select-option *ngFor="let c of clients" [value]="c._id">
+                  {{ c.name }}{{ c.company ? ' — ' + c.company : '' }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>{{ 'invoices.type' | translate }} *</ion-label>
+              <div class="type-toggle" slot="end">
+                <button type="button" class="type-btn" [class.active]="headerForm.get('type')?.value === 'proforma'"
+                        (click)="headerForm.get('type')?.setValue('proforma')">
+                  {{ 'invoices.typeProforma' | translate }}
+                </button>
+                <button type="button" class="type-btn" [class.active]="headerForm.get('type')?.value === 'facture'"
+                        (click)="headerForm.get('type')?.setValue('facture')">
+                  {{ 'invoices.typeFacture' | translate }}
+                </button>
+              </div>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.numero' | translate }} *</ion-label>
+              <ion-input formControlName="numero"
+                         [class.ion-invalid]="headerForm.get('numero')?.invalid && headerForm.get('numero')?.touched"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.paymentMode' | translate }}</ion-label>
+              <ion-select formControlName="payment_mode" interface="action-sheet">
+                <ion-select-option *ngFor="let m of paymentModes" [value]="m.value">{{ m.label }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.paymentConditions' | translate }}</ion-label>
+              <ion-input formControlName="payment_conditions"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.bankName' | translate }} *</ion-label>
+              <ion-input formControlName="bank_name"
+                         [class.ion-invalid]="headerForm.get('bank_name')?.invalid && headerForm.get('bank_name')?.touched"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.bankRib' | translate }} *</ion-label>
+              <ion-input formControlName="bank_rib"
+                         [class.ion-invalid]="headerForm.get('bank_rib')?.invalid && headerForm.get('bank_rib')?.touched"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.notes' | translate }}</ion-label>
+              <ion-textarea formControlName="notes" rows="3" auto-grow="true"></ion-textarea>
+            </ion-item>
+          </ion-list>
+
+        </form>
+
+        <div class="step-actions">
+          <ion-button expand="block" (click)="next()">
+            {{ 'common.next' | translate }}
+            <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Lines -->
+    <div [hidden]="currentStep !== 1">
+      <div class="slide-content ion-padding">
+        <form [formGroup]="linesForm">
+
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">{{ 'invoices.tvaRate' | translate }} *</ion-label>
+              <ion-input type="number" formControlName="tva_rate" min="0" max="100"></ion-input>
+              <ion-note slot="end" style="align-self: center; font-size: 18px; color: var(--ion-color-medium);">%</ion-note>
+            </ion-item>
+          </ion-list>
+
+          <div formArrayName="lines">
+            <div *ngFor="let line of lines.controls; let i = index" [formGroupName]="i" class="line-block">
+
+              <div class="line-block-header">
+                <span class="line-num">{{ 'invoices.line' | translate }} {{ i + 1 }}</span>
+                <ion-button fill="clear" color="danger" size="small"
+                            [disabled]="lines.length === 1" (click)="removeLine(i)">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+
+              <ion-list>
+                <ion-item>
+                  <ion-label position="stacked">{{ 'products.designation' | translate }} *</ion-label>
+                  <ion-select formControlName="product_id" interface="action-sheet"
+                              [placeholder]="'invoices.selectProduct' | translate"
+                              (ionChange)="onProductSelect(i, $any($event).detail.value)">
+                    <ion-select-option *ngFor="let p of products" [value]="p._id">
+                      {{ p.designation }} ({{ p.ref }})
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+
+                <ion-item *ngIf="line.get('product_id')?.value">
+                  <ion-label position="stacked">{{ 'products.designation' | translate }}</ion-label>
+                  <ion-input formControlName="designation"></ion-input>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">{{ 'products.ref' | translate }}</ion-label>
+                  <ion-input formControlName="ref" readonly></ion-input>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">{{ 'invoices.qty' | translate }}</ion-label>
+                  <ion-input type="number" formControlName="quantity" min="1"
+                             (ionChange)="recalcLine(i)"></ion-input>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">{{ 'products.unitPriceHt' | translate }}</ion-label>
+                  <ion-input type="number" formControlName="unit_price_ht" readonly></ion-input>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">{{ 'invoices.discountPct' | translate }}</ion-label>
+                  <ion-input type="number" formControlName="discount_pct" min="0" max="100"
+                             (ionChange)="recalcLine(i)"></ion-input>
+                  <ion-note slot="end" style="align-self: center; font-size: 18px; color: var(--ion-color-medium);">%</ion-note>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="stacked">{{ 'invoices.lineTotal' | translate }}</ion-label>
+                  <ion-note slot="end" class="line-total-note">
+                    {{ line.get('line_total_ht')?.value | number:'1.2-2' }} MAD
+                  </ion-note>
+                </ion-item>
+              </ion-list>
+
+            </div>
+          </div>
+
+          <ion-button expand="block" fill="outline" class="add-line-btn" (click)="addLine()">
+            <ion-icon slot="start" name="add-outline"></ion-icon>
+            {{ 'invoices.addLine' | translate }}
+          </ion-button>
+
+        </form>
+
+        <div class="step-actions two-actions">
+          <ion-button fill="outline" (click)="prev()">
+            <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+            {{ 'common.back' | translate }}
+          </ion-button>
+          <ion-button (click)="next()">
+            {{ 'common.next' | translate }}
+            <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Summary -->
+    <div [hidden]="currentStep !== 2">
+      <div class="slide-content ion-padding">
+
+        <div class="summary-card">
+          <h3 class="summary-title">{{ 'invoices.stepSummary' | translate }}</h3>
+
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                <p class="summary-label">{{ 'invoices.client' | translate }}</p>
+                <h3>{{ getClientName(headerForm.get('client_id')?.value) }}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <p class="summary-label">{{ 'invoices.type' | translate }}</p>
+                <h3>{{ headerForm.get('type')?.value === 'facture' ? ('invoices.typeFacture' | translate) : ('invoices.typeProforma' | translate) }}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <p class="summary-label">{{ 'invoices.numero' | translate }}</p>
+                <h3>{{ headerForm.get('numero')?.value }}</h3>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div class="totals-summary">
+            <div class="total-row"><span>{{ 'invoices.totalHt' | translate }}</span><strong>{{ totals.total_ht | number:'1.2-2' }} MAD</strong></div>
+            <div class="total-row"><span>{{ 'invoices.tva' | translate }} ({{ linesForm.get('tva_rate')?.value ?? 0 }}%)</span><strong>{{ totals.tva_amount | number:'1.2-2' }} MAD</strong></div>
+            <div class="divider"></div>
+            <div class="total-row total-ttc"><span>{{ 'invoices.totalTtc' | translate }}</span><strong>{{ totals.total_ttc | number:'1.2-2' }} MAD</strong></div>
+          </div>
+        </div>
+
+        <div class="step-actions two-actions">
+          <ion-button fill="outline" (click)="prev()">
+            <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+            {{ 'common.back' | translate }}
+          </ion-button>
+          <ion-button color="success" [disabled]="saving" (click)="submit()">
+            <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+            {{ 'invoices.createInvoice' | translate }}
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- /.scroll-wrapper -->
+  </ion-content>
+</ion-page>

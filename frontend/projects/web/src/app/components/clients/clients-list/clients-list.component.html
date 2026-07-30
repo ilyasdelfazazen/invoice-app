@@ -1,0 +1,90 @@
+<div class="page">
+  <div class="page-header">
+    <h2>{{ 'clients.title' | translate }}</h2>
+    <button pButton icon="pi pi-plus" [label]="'clients.new' | translate"
+            (click)="router.navigate(['/clients/new'])"></button>
+  </div>
+
+  <div class="filters-bar">
+    <span class="p-input-icon-left" style="display:block; max-width:300px">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [(ngModel)]="searchTerm"
+             (ngModelChange)="onSearch($event)"
+             [placeholder]="'common.search' | translate" style="width:100%" />
+    </span>
+
+    <div class="filter-separator"></div>
+
+    <div class="sort-group">
+      <span class="sort-label">{{ 'clients.name' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortField === 'name' && sortDir === 'asc'"
+              (click)="setSort('name')" title="A → Z"><i class="pi pi-sort-alpha-down"></i></button>
+      <button class="sort-btn" [class.active]="sortField === 'name' && sortDir === 'desc'"
+              (click)="setSort('name')" title="Z → A"><i class="pi pi-sort-alpha-up-alt"></i></button>
+    </div>
+
+    <div class="sort-group">
+      <span class="sort-label">{{ 'clients.company' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortField === 'company' && sortDir === 'asc'"
+              (click)="setSort('company')" title="A → Z"><i class="pi pi-sort-alpha-down"></i></button>
+      <button class="sort-btn" [class.active]="sortField === 'company' && sortDir === 'desc'"
+              (click)="setSort('company')" title="Z → A"><i class="pi pi-sort-alpha-up-alt"></i></button>
+    </div>
+
+    <div class="sort-group">
+      <span class="sort-label">{{ 'clients.city' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortField === 'city' && sortDir === 'asc'"
+              (click)="setSort('city')" title="A → Z"><i class="pi pi-sort-alpha-down"></i></button>
+      <button class="sort-btn" [class.active]="sortField === 'city' && sortDir === 'desc'"
+              (click)="setSort('city')" title="Z → A"><i class="pi pi-sort-alpha-up-alt"></i></button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <p-table [value]="displayed" [loading]="loading" responsiveLayout="scroll"
+             styleClass="p-datatable-sm p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'clients.name' | translate }}</th>
+          <th>{{ 'clients.company' | translate }}</th>
+          <th>{{ 'clients.city' | translate }}</th>
+          <th>{{ 'clients.ice' | translate }}</th>
+          <th>{{ 'clients.phone' | translate }}</th>
+          <th class="actions-col">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-client>
+        <tr>
+          <td><strong>{{ client.name }}</strong></td>
+          <td>{{ client.company }}</td>
+          <td>{{ client.city }}</td>
+          <td><span class="ref-badge">{{ client.ice }}</span></td>
+          <td>{{ client.phone }}</td>
+          <td class="actions-col">
+            <div class="row-actions">
+              <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"
+                      (click)="router.navigate(['/clients', client._id])"></button>
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"
+                      (click)="router.navigate(['/clients', client._id, 'edit'])"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                      (click)="confirmDelete(client)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="6" class="text-center">{{ 'common.noResults' | translate }}</td></tr>
+      </ng-template>
+
+      <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let i of [1,2,3,4,5]">
+          <td *ngFor="let j of [1,2,3,4,5,6]"><p-skeleton height="1rem"></p-skeleton></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

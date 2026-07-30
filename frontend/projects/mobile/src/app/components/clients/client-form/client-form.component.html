@@ -1,0 +1,55 @@
+<div class="page">
+  <div class="page-header">
+    <ion-button fill="clear" (click)="router.navigate(['/clients'])">
+      <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <h2>{{ (isEdit ? 'common.edit' : 'clients.new') | translate }}</h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ion-list class="form-card">
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.name' | translate }} *</ion-label>
+        <ion-input formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.company' | translate }}</ion-label>
+        <ion-input formControlName="company"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.ice' | translate }}</ion-label>
+        <ion-input formControlName="ice"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.codeClient' | translate }}</ion-label>
+        <ion-input formControlName="code_client"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.city' | translate }}</ion-label>
+        <ion-input formControlName="city"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.phone' | translate }}</ion-label>
+        <ion-input formControlName="phone" type="tel"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.email' | translate }}</ion-label>
+        <ion-input formControlName="email" type="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'clients.address' | translate }}</ion-label>
+        <ion-input formControlName="address"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div class="form-actions">
+      <ion-button fill="outline" type="button" (click)="router.navigate(['/clients'])">
+        {{ 'common.cancel' | translate }}
+      </ion-button>
+      <ion-button type="submit" [disabled]="form.invalid || loading">
+        <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+        {{ 'common.save' | translate }}
+      </ion-button>
+    </div>
+  </form>
+</div>

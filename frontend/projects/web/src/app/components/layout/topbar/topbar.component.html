@@ -1,0 +1,25 @@
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="toggle-btn" (click)="toggleSidebar.emit()">
+      <i class="pi pi-bars"></i>
+    </button>
+    <span class="page-title">{{ currentPageKey | translate }}</span>
+  </div>
+
+  <div class="topbar-right">
+    <div class="lang-switcher">
+      <button
+        *ngFor="let l of languages"
+        class="lang-btn"
+        [class.active]="lang.getCurrentLang() === l.code"
+        (click)="setLang(l.code)"
+      >
+        <img [src]="'assets/flags/' + l.flag + '.svg'" class="flag-img" [alt]="l.label"> {{ l.label }}
+      </button>
+    </div>
+
+    <button class="icon-btn" (click)="theme.toggleDark()" [title]="'settings.darkMode' | translate">
+      <i [class]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'"></i>
+    </button>
+  </div>
+</header>

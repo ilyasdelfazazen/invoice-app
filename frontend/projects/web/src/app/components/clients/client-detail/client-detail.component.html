@@ -1,0 +1,17 @@
+<div class="page">
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text" (click)="router.navigate(['/clients'])"></button>
+    <h2>{{ client.name }}</h2>
+    <button pButton icon="pi pi-pencil" [label]="'common.edit' | translate" (click)="router.navigate(['/clients', client._id, 'edit'])"></button>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-row"><span class="label">{{ 'clients.company' | translate }}</span><span>{{ client.company }}</span></div>
+    <div class="detail-row"><span class="label">{{ 'clients.codeClient' | translate }}</span><span>{{ client.code_client }}</span></div>
+    <div class="detail-row"><span class="label">{{ 'clients.ice' | translate }}</span><span>{{ client.ice }}</span></div>
+    <div class="detail-row"><span class="label">{{ 'clients.address' | translate }}</span><span>{{ client.address }}</span></div>
+    <div class="detail-row"><span class="label">{{ 'clients.city' | translate }}</span><span>{{ client.city }}</span></div>
+    <div class="detail-row"><span class="label">{{ 'clients.phone' | translate }}</span><span>{{ client.phone }}</span></div>
+    <div class="detail-row"><span class="label">{{ 'clients.email' | translate }}</span><span>{{ client.email }}</span></div>
+  </div>
+</div>

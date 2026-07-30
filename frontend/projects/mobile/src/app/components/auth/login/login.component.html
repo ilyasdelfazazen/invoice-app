@@ -1,0 +1,42 @@
+<ion-content class="login-content">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <img [src]="appLogo" alt="logo" class="logo-img" />
+      </div>
+      <h2>{{ appName }}</h2>
+      <p class="text-muted">{{ 'auth.login' | translate }}</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="field">
+        <label>{{ 'auth.username' | translate }}</label>
+        <input formControlName="username" type="text" autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'auth.password' | translate }}</label>
+        <div class="password-wrapper">
+          <input formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete="current-password" />
+          <button type="button" class="eye-btn" (click)="showPassword = !showPassword">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-msg">{{ error | translate }}</div>
+
+      <button type="submit" class="submit-btn" [disabled]="form.invalid || loading">
+        <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+        <span *ngIf="!loading">{{ 'auth.loginButton' | translate }}</span>
+      </button>
+
+    </form>
+
+    <div *ngIf="lastLogin" class="last-login">
+      <ion-icon name="time-outline"></ion-icon>
+      {{ 'auth.lastLogin' | translate }}: {{ lastLogin }}
+    </div>
+  </div>
+</ion-content>

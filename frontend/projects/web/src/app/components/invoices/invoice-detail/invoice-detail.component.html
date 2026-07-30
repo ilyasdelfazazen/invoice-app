@@ -1,0 +1,226 @@
+<div class="page">
+
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text"
+            (click)="router.navigate(['/invoices'])"></button>
+
+    <ng-container *ngIf="!editingFacture">
+      <div class="numero-edit" *ngIf="!editingNumero">
+        <h2>{{ invoice.numero }}</h2>
+        <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"
+                (click)="startEditNumero()" pTooltip="Modifier le numéro"></button>
+      </div>
+      <div class="numero-edit" *ngIf="editingNumero">
+        <input pInputText [(ngModel)]="numeroInput" class="numero-input"
+               (keyup.enter)="saveNumero()" (keyup.escape)="cancelEditNumero()" />
+        <button pButton icon="pi pi-check" class="p-button-success p-button-sm"
+                [loading]="savingNumero" (click)="saveNumero()"></button>
+        <button pButton icon="pi pi-times" class="p-button-text p-button-sm"
+                (click)="cancelEditNumero()"></button>
+      </div>
+    </ng-container>
+
+    <h2 *ngIf="editingFacture" class="edit-title">{{ 'invoices.editMode' | translate }}</h2>
+
+    <span class="type-badge" [class.is-facture]="invoice.type === 'facture'">
+      {{ invoice.type === 'facture' ? ('invoices.typeFacture' | translate) : ('invoices.typeProforma' | translate) }}
+    </span>
+
+    <ng-container *ngIf="!editingFacture">
+      <button pButton [icon]="switchingType ? 'pi pi-spin pi-spinner' : 'pi pi-sync'"
+              [label]="invoice.type === 'facture' ? ('invoices.switchToProforma' | translate) : ('invoices.switchToFacture' | translate)"
+              class="p-button-outlined p-button-sm"
+              [disabled]="switchingType" (click)="toggleType()"></button>
+      <button *ngIf="invoice.type === 'facture'"
+              pButton icon="pi pi-pencil" [label]="'common.edit' | translate"
+              class="p-button-sm" (click)="enterFactureEdit()"></button>
+      <button pButton icon="pi pi-file-pdf" [label]="'invoices.downloadPdf' | translate"
+              class="p-button-outlined" (click)="downloadPdf()"></button>
+    </ng-container>
+
+    <ng-container *ngIf="editingFacture">
+      <button pButton icon="pi pi-check" [label]="'common.save' | translate"
+              [loading]="savingFacture" (click)="saveFacture()"></button>
+      <button pButton icon="pi pi-times" [label]="'common.cancel' | translate"
+              class="p-button-outlined p-button-secondary" [disabled]="savingFacture"
+              (click)="cancelFactureEdit()"></button>
+    </ng-container>
+  </div>
+
+  <ng-container *ngIf="!editingFacture">
+
+    <div class="detail-card mb-md">
+      <div class="info-grid">
+        <div class="info-row"><span class="label">{{ 'invoices.date' | translate }}</span><span>{{ invoice.date | date:'dd/MM/yyyy' }}</span></div>
+        <div class="info-row">
+          <span class="label">{{ 'invoices.client' | translate }}</span>
+          <span>
+            <strong>{{ $any(invoice.client_id)?.name }}</strong>
+            <span *ngIf="$any(invoice.client_id)?.company" class="client-sub"> — {{ $any(invoice.client_id)?.company }}</span>
+          </span>
+        </div>
+        <div class="info-row"><span class="label">{{ 'invoices.paymentMode' | translate }}</span><span>{{ invoice.payment_mode }}</span></div>
+        <div class="info-row"><span class="label">{{ 'invoices.paymentConditions' | translate }}</span><span>{{ invoice.payment_conditions }}</span></div>
+        <div class="info-row"><span class="label">{{ 'invoices.bankName' | translate }}</span><span>{{ invoice.bank_name }}</span></div>
+        <div class="info-row"><span class="label">{{ 'invoices.bankRib' | translate }}</span><span>{{ invoice.bank_rib }}</span></div>
+      </div>
+    </div>
+
+    <div class="detail-card mb-md">
+      <p-table [value]="lines" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'products.ref' | translate }}</th>
+            <th>{{ 'products.designation' | translate }}</th>
+            <th class="text-right">{{ 'invoices.qty' | translate }}</th>
+            <th class="text-right">{{ 'products.unitPriceHt' | translate }}</th>
+            <th *ngIf="invoice.type === 'proforma'" class="text-right">{{ 'invoices.discountPct' | translate }}</th>
+            <th class="text-right">{{ 'invoices.lineTotal' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-line>
+          <tr>
+            <td><span class="ref-badge">{{ line.ref }}</span></td>
+            <td>{{ line.designation }}</td>
+            <td class="text-right">{{ line.quantity }}</td>
+            <td class="text-right">{{ (invoice.type === 'facture' && line.discount_pct > 0 ? line.line_total_ht / line.quantity : line.unit_price_ht) | number:'1.2-2' }} MAD</td>
+            <td *ngIf="invoice.type === 'proforma'" class="text-right">{{ (line.discount_pct * 100) | number:'1.0-1' }}%</td>
+            <td class="text-right"><strong>{{ line.line_total_ht | number:'1.2-2' }} MAD</strong></td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <p-divider></p-divider>
+
+      <div class="totals">
+        <div class="total-row"><span>{{ 'invoices.totalHt' | translate }}</span><span>{{ invoice.total_ht | number:'1.2-2' }} MAD</span></div>
+        <div class="total-row"><span>{{ 'invoices.tva' | translate }} ({{ invoice.tva_rate * 100 }}%)</span><span>{{ invoice.tva_amount | number:'1.2-2' }} MAD</span></div>
+        <div class="total-row ttc"><span>{{ 'invoices.totalTtc' | translate }}</span><strong>{{ invoice.total_ttc | number:'1.2-2' }} MAD</strong></div>
+      </div>
+    </div>
+
+    <div *ngIf="invoice.notes" class="detail-card">
+      <span class="label">{{ 'invoices.notes' | translate }}</span>
+      <p class="notes">{{ invoice.notes }}</p>
+    </div>
+
+  </ng-container>
+
+  <ng-container *ngIf="editingFacture">
+    <form [formGroup]="factureForm">
+
+      <div class="detail-card mb-md">
+        <div class="edit-grid">
+
+          <div class="edit-field">
+            <label class="edit-label">{{ 'invoices.numero' | translate }} *</label>
+            <input pInputText formControlName="numero" class="w-full"
+                   [class.ng-invalid]="factureForm.get('numero')?.invalid && factureForm.get('numero')?.touched" />
+          </div>
+
+          <div class="edit-field">
+            <label class="edit-label">{{ 'invoices.date' | translate }} *</label>
+            <p-calendar formControlName="date" dateFormat="dd/mm/yy" styleClass="w-full"
+                        [class.ng-invalid]="factureForm.get('date')?.invalid && factureForm.get('date')?.touched">
+            </p-calendar>
+          </div>
+
+          <div class="edit-field">
+            <label class="edit-label">{{ 'invoices.paymentMode' | translate }}</label>
+            <p-dropdown formControlName="payment_mode" [options]="paymentModeOptions"
+                        optionLabel="label" optionValue="value"
+                        styleClass="w-full">
+            </p-dropdown>
+          </div>
+
+          <div class="edit-field">
+            <label class="edit-label">{{ 'invoices.paymentConditions' | translate }}</label>
+            <input pInputText formControlName="payment_conditions" class="w-full" />
+          </div>
+
+          <div class="edit-field">
+            <label class="edit-label">{{ 'invoices.bankName' | translate }}</label>
+            <input pInputText formControlName="bank_name" class="w-full" />
+          </div>
+
+          <div class="edit-field">
+            <label class="edit-label">{{ 'invoices.bankRib' | translate }}</label>
+            <input pInputText formControlName="bank_rib" class="w-full" />
+          </div>
+
+          <div class="edit-field">
+            <label class="edit-label">{{ 'invoices.tvaRate' | translate }}</label>
+            <p-inputNumber formControlName="tva_rate" [min]="0" [max]="100"
+                           [minFractionDigits]="0" [maxFractionDigits]="2"
+                           [showButtons]="true" buttonLayout="horizontal"
+                           decrementButtonClass="p-button-secondary"
+                           incrementButtonClass="p-button-secondary"
+                           incrementButtonIcon="pi pi-plus"
+                           decrementButtonIcon="pi pi-minus"
+                           suffix="%" styleClass="w-full">
+            </p-inputNumber>
+          </div>
+
+          <div class="edit-field col-span-2">
+            <label class="edit-label">{{ 'invoices.notes' | translate }}</label>
+            <textarea pInputTextarea formControlName="notes" rows="3" class="w-full"></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="detail-card mb-md">
+        <div class="lines-edit" formArrayName="lines">
+
+          <div class="line-edit-header">
+            <span class="le-ref">{{ 'products.ref' | translate }}</span>
+            <span class="le-desc">{{ 'products.designation' | translate }}</span>
+            <span class="le-qty">{{ 'invoices.qty' | translate }}</span>
+            <span class="le-pu text-right">{{ 'products.unitPriceHt' | translate }}</span>
+            <span class="le-total">{{ 'invoices.lineTotal' | translate }}</span>
+            <span class="le-del"></span>
+          </div>
+
+          <div class="line-edit-row" *ngFor="let line of factureLines.controls; let i = index" [formGroupName]="i">
+            <div class="le-ref">
+              <span class="le-static ref-badge">{{ line.get('ref')?.value }}</span>
+            </div>
+            <div class="le-desc">
+              <input pInputText formControlName="designation" class="w-full"
+                     [title]="line.get('designation')?.value" />
+            </div>
+            <div class="le-qty">
+              <span class="le-static text-center">{{ line.get('quantity')?.value }}</span>
+            </div>
+            <div class="le-pu">
+              <p-inputNumber formControlName="unit_price_ht" [min]="0"
+                             [minFractionDigits]="2" [maxFractionDigits]="2"
+                             styleClass="w-full"
+                             (onInput)="recalcFactureLine(i)">
+              </p-inputNumber>
+            </div>
+            <div class="le-total">
+              <strong>{{ line.get('line_total_ht')?.value | number:'1.2-2' }} MAD</strong>
+            </div>
+            <div class="le-del">
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm"
+                      type="button" [disabled]="factureLines.length === 1"
+                      (click)="removeFactureLine(i)"></button>
+            </div>
+          </div>
+
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="totals">
+          <div class="total-row"><span>{{ 'invoices.totalHt' | translate }}</span><span>{{ factureTotals.total_ht | number:'1.2-2' }} MAD</span></div>
+          <div class="total-row"><span>{{ 'invoices.tva' | translate }} ({{ factureForm.get('tva_rate')?.value }}%)</span><span>{{ factureTotals.tva_amount | number:'1.2-2' }} MAD</span></div>
+          <div class="total-row ttc"><span>{{ 'invoices.totalTtc' | translate }}</span><strong>{{ factureTotals.total_ttc | number:'1.2-2' }} MAD</strong></div>
+        </div>
+      </div>
+
+    </form>
+  </ng-container>
+
+</div>

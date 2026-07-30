@@ -1,0 +1,51 @@
+<div class="page">
+  <div class="page-header">
+    <ion-button fill="clear" size="small" (click)="router.navigate(['/operations'])">
+      <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <h2>{{ operation.name }}</h2>
+    <ion-button size="small" (click)="router.navigate(['/operations', operation._id, 'edit'])">
+      <ion-icon slot="start" name="pencil-outline"></ion-icon>
+      {{ 'common.edit' | translate }}
+    </ion-button>
+  </div>
+
+  <div class="status-row">
+    <ion-badge [color]="statusColor(operation.status)" class="status-badge">
+      <ion-icon [name]="operation.status === 'paid' ? 'checkmark-circle-outline' : 'time-outline'"></ion-icon>
+      {{ ('operations.status_' + operation.status) | translate }}
+    </ion-badge>
+  </div>
+
+  <ion-list class="detail-card">
+    <ion-item>
+      <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
+      <ion-label>
+        <p class="field-label">{{ 'operations.date' | translate }}</p>
+        <h3>{{ operation.date | date:'dd/MM/yyyy' }}</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="cash-outline" slot="start" color="medium"></ion-icon>
+      <ion-label>
+        <p class="field-label">{{ 'operations.amount' | translate }}</p>
+        <h3 class="amount">{{ operation.amount | number:'1.2-2' }} MAD</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="operation.context">
+      <ion-icon name="chatbox-outline" slot="start" color="medium"></ion-icon>
+      <ion-label>
+        <p class="field-label">{{ 'operations.context' | translate }}</p>
+        <h3>{{ operation.context }}</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon [name]="operation.category === 'personal' ? 'person-outline' : 'briefcase-outline'"
+                slot="start" color="medium"></ion-icon>
+      <ion-label>
+        <p class="field-label">{{ 'operations.category' | translate }}</p>
+        <h3>{{ (operation.category === 'personal' ? 'operations.personal' : 'operations.business') | translate }}</h3>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</div>

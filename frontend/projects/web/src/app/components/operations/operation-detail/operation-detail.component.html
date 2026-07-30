@@ -1,0 +1,40 @@
+<div class="page">
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text"
+            (click)="router.navigate(['/operations'])"></button>
+    <h2>{{ operation.name }}</h2>
+    <p-tag [value]="('operations.status_' + operation.status) | translate"
+           [severity]="statusSeverity(operation.status)">
+    </p-tag>
+    <button pButton icon="pi pi-pencil" [label]="'common.edit' | translate"
+            (click)="router.navigate(['/operations', operation._id, 'edit'])"></button>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-row">
+      <span class="label">{{ 'operations.date' | translate }}</span>
+      <span>{{ operation.date | date:'dd/MM/yyyy' }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">{{ 'operations.amount' | translate }}</span>
+      <span class="amount">{{ operation.amount | number:'1.2-2' }} MAD</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">{{ 'operations.status' | translate }}</span>
+      <p-tag [value]="('operations.status_' + operation.status) | translate"
+             [severity]="statusSeverity(operation.status)">
+      </p-tag>
+    </div>
+    <div class="detail-row" *ngIf="operation.context">
+      <span class="label">{{ 'operations.context' | translate }}</span>
+      <span>{{ operation.context }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">{{ 'operations.category' | translate }}</span>
+      <span>
+        <i [class]="operation.category === 'personal' ? 'pi pi-user cat-personal' : 'pi pi-briefcase cat-business'"></i>
+        {{ (operation.category === 'personal' ? 'operations.personal' : 'operations.business') | translate }}
+      </span>
+    </div>
+  </div>
+</div>

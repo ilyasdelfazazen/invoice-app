@@ -1,0 +1,167 @@
+<div class="page">
+  <div class="page-header">
+    <ion-icon name="settings-outline" class="section-icon"></ion-icon>
+    <h2>{{ 'nav.settings' | translate }}</h2>
+    <ion-button fill="clear" color="danger" class="logout-btn" (click)="logout()">
+      <ion-icon slot="icon-only" name="exit-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <ion-segment [(ngModel)]="activeTab" class="settings-segment">
+    <ion-segment-button value="company" layout="icon-start">
+      <ion-icon name="business-outline"></ion-icon>
+      <ion-label>{{ 'settings.appInfo' | translate }}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="prefs" layout="icon-start">
+      <ion-icon name="color-palette-outline"></ion-icon>
+      <ion-label>{{ 'settings.preferences' | translate }}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="security" layout="icon-start">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <ion-label>{{ 'settings.security' | translate }}</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div class="segment-content">
+
+    <!-- TAB: Company -->
+    <ng-container *ngIf="activeTab === 'company'">
+      <form [formGroup]="appForm" (ngSubmit)="saveApp()">
+
+        <!-- Logo -->
+        <div class="logo-section">
+          <div class="logo-preview" [class.has-logo]="logoPreview">
+            <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo" />
+            <img *ngIf="!logoPreview" src="assets/defaultImages/logo.png" alt="Default Logo" class="logo-default" />
+          </div>
+          <div class="logo-actions">
+            <label class="upload-btn" for="logoInput">
+              <ion-icon name="cloud-upload-outline"></ion-icon>
+              {{ 'settings.logo' | translate }}
+            </label>
+            <input id="logoInput" type="file" accept="image/*" hidden (change)="onLogoSelect($event)" />
+            <ion-button *ngIf="logoPreview" fill="clear" color="danger" size="small" type="button" (click)="removeLogo()">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <ion-list>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.companyName' | translate }} *</ion-label>
+            <ion-input formControlName="name" [class.ion-invalid]="appForm.get('name')?.invalid && appForm.get('name')?.touched"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.telephone' | translate }}</ion-label>
+            <ion-input formControlName="telephone" type="tel"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.email' | translate }}</ion-label>
+            <ion-input formControlName="email" type="email"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.address' | translate }}</ion-label>
+            <ion-input formControlName="address"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.ice' | translate }}</ion-label>
+            <ion-input formControlName="ice"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.rc' | translate }}</ion-label>
+            <ion-input formControlName="rc"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.if' | translate }}</ion-label>
+            <ion-input formControlName="if"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.cnss' | translate }}</ion-label>
+            <ion-input formControlName="cnss"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.tp' | translate }}</ion-label>
+            <ion-input formControlName="tp"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.bankName' | translate }}</ion-label>
+            <ion-input formControlName="bank_name"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.bankRib' | translate }}</ion-label>
+            <ion-input formControlName="bank_rib"></ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-button expand="block" type="submit" [disabled]="savingApp" class="save-btn">
+          {{ 'common.save' | translate }}
+        </ion-button>
+      </form>
+    </ng-container>
+
+    <!-- TAB: Preferences -->
+    <ng-container *ngIf="activeTab === 'prefs'">
+
+      <div class="pref-section">
+        <h4 class="pref-title">{{ 'settings.language' | translate }}</h4>
+        <div class="option-buttons">
+          <button *ngFor="let lang of languages" type="button"
+                  class="opt-btn" [class.active]="currentLang === lang.value"
+                  (click)="setLanguage(lang.value)">
+            <img [src]="'assets/flags/' + lang.flag + '.svg'" class="flag-img" [alt]="lang.label" />
+            {{ lang.label }}
+          </button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="pref-section">
+        <h4 class="pref-title">{{ 'settings.theme' | translate }}</h4>
+        <div class="option-buttons">
+          <button type="button" class="opt-btn" [class.active]="isDark" (click)="isDark || toggleDark()">
+            <ion-icon name="moon-outline"></ion-icon>
+            {{ 'settings.darkMode' | translate }}
+          </button>
+          <button type="button" class="opt-btn" [class.active]="!isDark" (click)="!isDark || toggleDark()">
+            <ion-icon name="sunny-outline"></ion-icon>
+            {{ 'settings.lightMode' | translate }}
+          </button>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- TAB: Security -->
+    <ng-container *ngIf="activeTab === 'security'">
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+
+        <ion-list>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.currentPassword' | translate }} *</ion-label>
+            <ion-input type="password" formControlName="currentPassword"
+                       [class.ion-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.newPassword' | translate }} *</ion-label>
+            <ion-input type="password" formControlName="newPassword"
+                       [class.ion-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">{{ 'settings.confirmPassword' | translate }} *</ion-label>
+            <ion-input type="password" formControlName="confirmPassword"
+                       [class.ion-invalid]="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched"></ion-input>
+            <ion-note *ngIf="$any(passwordForm.get('confirmPassword')?.errors)?.mismatch" color="danger" slot="end">
+              {{ 'settings.passwordMismatch' | translate }}
+            </ion-note>
+          </ion-item>
+        </ion-list>
+
+        <ion-button expand="block" type="submit" [disabled]="savingPassword" class="save-btn">
+          {{ 'settings.changePassword' | translate }}
+        </ion-button>
+      </form>
+    </ng-container>
+
+  </div>
+</div>

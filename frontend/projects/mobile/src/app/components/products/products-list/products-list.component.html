@@ -1,0 +1,57 @@
+<div class="page">
+  <div class="page-header">
+    <ion-icon name="cube-outline" class="section-icon"></ion-icon>
+    <h2>{{ 'products.title' | translate }}</h2>
+    <ion-button size="small" (click)="router.navigate(['/products/new'])">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      {{ 'products.newProduct' | translate }}
+    </ion-button>
+  </div>
+
+  <ion-searchbar
+    [formControl]="searchControl"
+    [placeholder]="'common.search' | translate"
+    debounce="0">
+  </ion-searchbar>
+
+  <div class="sort-bar">
+    <button class="sort-btn" [class.active]="sortName !== ''" (click)="toggleSortName()">
+      {{ 'products.designation' | translate }}
+      <ion-icon [name]="sortName === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+    <button class="sort-btn" [class.active]="sortPrice !== ''" (click)="toggleSortPrice()">
+      {{ 'common.price' | translate }}
+      <ion-icon [name]="sortPrice === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="skeleton-list">
+    <ion-item *ngFor="let i of [1,2,3,4,5]">
+      <ion-skeleton-text animated style="width:70%"></ion-skeleton-text>
+    </ion-item>
+  </div>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let product of displayed" class="product-item" detail="false" (click)="router.navigate(['/products', product._id])">
+      <ion-label>
+        <h3>{{ product.designation }}</h3>
+        <p><span class="ref-badge">{{ product.ref }}</span></p>
+      </ion-label>
+      <div slot="end" class="product-end">
+        <span class="amount">{{ product.unit_price_ht | number:'1.2-2' }} MAD</span>
+        <div class="row-actions">
+          <ion-button fill="clear" size="small" (click)="$event.stopPropagation(); router.navigate(['/products', product._id, 'edit'])">
+            <ion-icon name="pencil-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" color="danger" (click)="$event.stopPropagation(); confirmDelete(product)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-item>
+
+    <ion-item *ngIf="displayed.length === 0">
+      <ion-label class="ion-text-center text-muted">{{ 'common.noData' | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+</div>

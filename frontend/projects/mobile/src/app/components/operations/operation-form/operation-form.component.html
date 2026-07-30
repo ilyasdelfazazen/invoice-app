@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="page-header">
+    <ion-button fill="clear" size="small" (click)="router.navigate(['/operations'])">
+      <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <h2>{{ (isEdit ? 'operations.editOperation' : 'operations.newOperation') | translate }}</h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list class="form-card">
+      <ion-item>
+        <ion-icon name="text-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">{{ 'operations.name' | translate }} *</ion-label>
+        <ion-input formControlName="name"
+                   [class.ion-invalid]="form.get('name')?.invalid && form.get('name')?.touched"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">{{ 'operations.date' | translate }} *</ion-label>
+        <ion-input type="date" formControlName="date"
+                   [class.ion-invalid]="form.get('date')?.invalid && form.get('date')?.touched"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="flag-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">{{ 'operations.status' | translate }}</ion-label>
+        <ion-select formControlName="status" interface="action-sheet">
+          <ion-select-option value="open">{{ 'operations.status_open' | translate }}</ion-select-option>
+          <ion-select-option value="paid">{{ 'operations.status_paid' | translate }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="cash-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">{{ 'operations.amount' | translate }} *</ion-label>
+        <ion-input type="number" formControlName="amount" min="0" step="0.01"
+                   [class.ion-invalid]="form.get('amount')?.invalid && form.get('amount')?.touched"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="chatbox-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">{{ 'operations.context' | translate }}</ion-label>
+        <ion-textarea formControlName="context" rows="3" auto-grow="true"></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="grid-outline" slot="start" color="medium"></ion-icon>
+        <ion-label position="stacked">{{ 'operations.category' | translate }}</ion-label>
+        <div class="category-toggle">
+          <button type="button" class="cat-btn" [class.active]="form.get('category')?.value === 'business'"
+                  (click)="form.get('category')?.setValue('business')">
+            <ion-icon name="briefcase-outline"></ion-icon>
+            {{ 'operations.business' | translate }}
+          </button>
+          <button type="button" class="cat-btn" [class.active]="form.get('category')?.value === 'personal'"
+                  (click)="form.get('category')?.setValue('personal')">
+            <ion-icon name="person-outline"></ion-icon>
+            {{ 'operations.personal' | translate }}
+          </button>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <div class="form-actions">
+      <ion-button fill="outline" type="button" (click)="router.navigate(['/operations'])">
+        {{ 'common.cancel' | translate }}
+      </ion-button>
+      <ion-button type="submit" [disabled]="saving">
+        <ion-spinner *ngIf="saving" name="crescent" slot="start"></ion-spinner>
+        {{ 'common.save' | translate }}
+      </ion-button>
+    </div>
+  </form>
+</div>

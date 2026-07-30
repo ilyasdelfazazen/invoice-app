@@ -1,0 +1,208 @@
+<div class="page">
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text"
+            (click)="router.navigate(['/invoices'])"></button>
+    <h2>{{ 'invoices.newInvoice' | translate }}</h2>
+  </div>
+
+  <p-steps [model]="steps" [activeIndex]="currentStep" [readonly]="true"
+           styleClass="mb-lg"></p-steps>
+
+  <div class="form-card" *ngIf="currentStep === 0">
+    <form [formGroup]="headerForm">
+      <div class="form-grid">
+
+        <div class="field col-span-2">
+          <label>{{ 'invoices.client' | translate }} *</label>
+          <p-dropdown formControlName="client_id" [options]="clients"
+                      optionLabel="company" optionValue="_id"
+                      [filter]="true" filterBy="company,name,code_client"
+                      [placeholder]="'invoices.selectClient' | translate"
+                      styleClass="w-full"
+                      [class.ng-invalid]="headerForm.get('client_id')?.invalid && headerForm.get('client_id')?.touched">
+            <ng-template pTemplate="selectedItem" let-c>
+              <span>{{ c.name }}</span>
+              <span class="client-name-sub" *ngIf="c.company"> — {{ c.company }}</span>
+            </ng-template>
+            <ng-template pTemplate="item" let-c>
+              <div class="client-option">
+                <span class="client-option-company">{{ c.name }}</span>
+                <span class="client-option-name" *ngIf="c.company">{{ c.company }}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+
+        <div class="field">
+          <label>{{ 'invoices.type' | translate }} *</label>
+          <div class="type-toggle">
+            <button type="button" class="type-btn" [class.active]="headerForm.get('type')?.value === 'proforma'"
+                    (click)="headerForm.get('type')?.setValue('proforma')">
+              {{ 'invoices.typeProforma' | translate }}
+            </button>
+            <button type="button" class="type-btn" [class.active]="headerForm.get('type')?.value === 'facture'"
+                    (click)="headerForm.get('type')?.setValue('facture')">
+              {{ 'invoices.typeFacture' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>{{ 'invoices.numero' | translate }} *</label>
+          <input pInputText formControlName="numero" class="w-full"
+                 [class.ng-invalid]="headerForm.get('numero')?.invalid && headerForm.get('numero')?.touched" />
+        </div>
+
+        <div class="field">
+          <label>{{ 'invoices.paymentMode' | translate }}</label>
+          <p-dropdown formControlName="payment_mode" [options]="paymentModes"
+                      optionLabel="label" optionValue="value"
+                      styleClass="w-full">
+          </p-dropdown>
+        </div>
+
+        <div class="field">
+          <label>{{ 'invoices.paymentConditions' | translate }}</label>
+          <input pInputText formControlName="payment_conditions" class="w-full" />
+        </div>
+
+        <div class="field">
+          <label>{{ 'invoices.bankName' | translate }} *</label>
+          <input pInputText formControlName="bank_name" class="w-full"
+                 [class.ng-invalid]="headerForm.get('bank_name')?.invalid && headerForm.get('bank_name')?.touched" />
+        </div>
+
+        <div class="field col-span-2">
+          <label>{{ 'invoices.bankRib' | translate }} *</label>
+          <input pInputText formControlName="bank_rib" class="w-full"
+                 [class.ng-invalid]="headerForm.get('bank_rib')?.invalid && headerForm.get('bank_rib')?.touched" />
+        </div>
+
+        <div class="field col-span-2">
+          <label>{{ 'invoices.notes' | translate }}</label>
+          <textarea pInputTextarea formControlName="notes" rows="3" class="w-full"></textarea>
+        </div>
+
+      </div>
+    </form>
+    <div class="step-actions">
+      <button pButton [label]="'common.next' | translate" icon="pi pi-arrow-right"
+              iconPos="right" (click)="next()"></button>
+    </div>
+  </div>
+
+  <div class="form-card" *ngIf="currentStep === 1">
+    <form [formGroup]="linesForm">
+
+      <div class="tva-row">
+        <div class="field">
+          <label>{{ 'invoices.tvaRate' | translate }} *</label>
+          <p-inputNumber formControlName="tva_rate" [min]="0" [max]="100"
+                         [minFractionDigits]="0" [maxFractionDigits]="2"
+                         [showButtons]="true" buttonLayout="horizontal"
+                         decrementButtonClass="p-button-secondary"
+                         incrementButtonClass="p-button-secondary"
+                         incrementButtonIcon="pi pi-plus"
+                         decrementButtonIcon="pi pi-minus"
+                         suffix="%" styleClass="w-full">
+          </p-inputNumber>
+        </div>
+      </div>
+
+      <div formArrayName="lines">
+        <div *ngFor="let line of lines.controls; let i = index"
+             [formGroupName]="i" class="line-row">
+
+          <div class="line-product">
+            <label>{{ 'products.designation' | translate }}</label>
+            <p-dropdown formControlName="product_id" [options]="products"
+                        optionLabel="designation" optionValue="_id"
+                        [filter]="true" filterBy="designation,ref"
+                        [placeholder]="'invoices.selectProduct' | translate"
+                        styleClass="w-full"
+                        (onChange)="onProductSelect(i, $event.value)">
+            </p-dropdown>
+            <input *ngIf="line.get('product_id')?.value"
+                   pInputText formControlName="designation"
+                   class="w-full designation-input"
+                   [placeholder]="'products.designation' | translate" />
+          </div>
+
+          <div class="line-field sm readonly-field">
+            <label>{{ 'products.ref' | translate }}</label>
+            <input pInputText formControlName="ref" class="w-full" readonly />
+          </div>
+
+          <div class="line-field sm">
+            <label>{{ 'invoices.qty' | translate }}</label>
+            <p-inputNumber formControlName="quantity" [min]="1" styleClass="w-full"
+                           (onInput)="recalcLine(i)">
+            </p-inputNumber>
+          </div>
+
+          <div class="line-field readonly-field">
+            <label>{{ 'products.unitPriceHt' | translate }}</label>
+            <p-inputNumber formControlName="unit_price_ht" mode="decimal"
+                           [minFractionDigits]="2" styleClass="w-full"
+                           [readonly]="true">
+            </p-inputNumber>
+          </div>
+
+          <div class="line-field sm">
+            <label>{{ 'invoices.discountPct' | translate }}</label>
+            <p-inputNumber formControlName="discount_pct" mode="decimal"
+                           [minFractionDigits]="0" [maxFractionDigits]="2"
+                           [min]="0" [max]="100" suffix="%" styleClass="w-full"
+                           (onInput)="recalcLine(i)">
+            </p-inputNumber>
+          </div>
+
+          <div class="line-field">
+            <label>{{ 'invoices.lineTotal' | translate }}</label>
+            <span class="line-total">{{ line.get('line_total_ht')?.value | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="line-delete">
+            <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm"
+                    (click)="removeLine(i)" [disabled]="lines.length === 1"></button>
+          </div>
+        </div>
+      </div>
+
+      <button pButton icon="pi pi-plus" [label]="'invoices.addLine' | translate"
+              class="p-button-outlined p-button-sm mt-md" (click)="addLine()"></button>
+    </form>
+
+    <div class="step-actions">
+      <button pButton [label]="'common.back' | translate" class="p-button-outlined"
+              (click)="prev()"></button>
+      <button pButton [label]="'common.next' | translate" icon="pi pi-arrow-right"
+              iconPos="right" (click)="next()"></button>
+    </div>
+  </div>
+
+  <div class="form-card" *ngIf="currentStep === 2">
+    <div class="summary-totals">
+      <div class="summary-row">
+        <span>{{ 'invoices.totalHt' | translate }}</span>
+        <strong>{{ totals.total_ht | number:'1.2-2' }} MAD</strong>
+      </div>
+      <div class="summary-row">
+        <span>{{ 'invoices.tva' | translate }} ({{ linesForm.get('tva_rate')?.value ?? 0 }}%)</span>
+        <strong>{{ totals.tva_amount | number:'1.2-2' }} MAD</strong>
+      </div>
+      <p-divider></p-divider>
+      <div class="summary-row total-ttc">
+        <span>{{ 'invoices.totalTtc' | translate }}</span>
+        <strong>{{ totals.total_ttc | number:'1.2-2' }} MAD</strong>
+      </div>
+    </div>
+
+    <div class="step-actions">
+      <button pButton [label]="'common.back' | translate" class="p-button-outlined"
+              (click)="prev()"></button>
+      <button pButton [label]="'invoices.createInvoice' | translate"
+              icon="pi pi-check" (click)="submit()" [loading]="saving"></button>
+    </div>
+  </div>
+</div>

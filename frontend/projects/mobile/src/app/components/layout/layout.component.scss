@@ -1,0 +1,51 @@
+ion-toolbar {
+  --color: #fff;
+  --border-color: transparent;
+}
+
+ion-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+ion-footer {
+  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.12);
+}
+
+ion-tab-bar {
+  --border: none;
+  height: 58px;
+}
+
+ion-tab-button {
+  --color: rgba(255, 255, 255, 0.5);
+  --color-selected: var(--color-secondary);
+
+  ion-icon {
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+
+  ion-label {
+    font-size: 10px;
+    font-weight: 500;
+  }
+
+  &.tab-selected {
+    --color: var(--color-secondary);
+  }
+}
+
+.flag-icon {
+  width: 22px;
+  height: 16px;
+  object-fit: cover;
+  border-radius: 3px;
+  display: block;
+}
+
+/* Dark mode: keep same navy bg, only text/icon colors adapt */
+body.dark ion-tab-button {
+  --color: rgba(255, 255, 255, 0.5);
+  --color-selected: var(--color-secondary);
+}

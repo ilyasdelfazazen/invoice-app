@@ -1,0 +1,151 @@
+<div class="page">
+  <div class="page-header">
+    <h2>{{ 'nav.operations' | translate }}</h2>
+    <span *ngIf="selectedOps.length > 0" class="selection-count">
+      {{ selectedOps.length }} {{ 'common.selected' | translate }}
+    </span>
+    <button *ngIf="selectedOps.length > 0" pButton icon="pi pi-file-pdf"
+            [label]="'operations.exportPdf' | translate"
+            class="p-button-outlined p-button-secondary"
+            (click)="exportPdf()"></button>
+    <button pButton icon="pi pi-plus" [label]="'operations.newOperation' | translate"
+            (click)="router.navigate(['/operations/new'])"></button>
+  </div>
+
+  <div class="filters-bar">
+    <span class="p-input-icon-left" style="display:block; max-width:260px">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [formControl]="searchControl"
+             [placeholder]="'common.search' | translate" style="width:100%" />
+    </span>
+
+    <p-dropdown [(ngModel)]="statusFilter" [options]="statusOptions"
+                optionLabel="label" optionValue="value"
+                [placeholder]="'operations.allStatuses' | translate"
+                styleClass="filter-sm"
+                (onChange)="onFilterChange()">
+    </p-dropdown>
+    <p-dropdown [(ngModel)]="categoryFilter" [options]="categoryOptions"
+                optionLabel="label" optionValue="value"
+                placeholder="Tous"
+                styleClass="filter-sm"
+                (onChange)="onFilterChange()">
+    </p-dropdown>
+
+    <div class="filter-separator"></div>
+
+    <div class="sort-group">
+      <span class="sort-label">{{ 'operations.name' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortName === 'asc'"
+              (click)="toggleSortName()" title="A → Z">
+        <i class="pi pi-sort-alpha-down"></i>
+      </button>
+      <button class="sort-btn" [class.active]="sortName === 'desc'"
+              (click)="toggleSortName()" title="Z → A">
+        <i class="pi pi-sort-alpha-up-alt"></i>
+      </button>
+    </div>
+
+    <div class="sort-group">
+      <span class="sort-label">{{ 'common.price' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortPrice === 'asc'"
+              (click)="toggleSortPrice()" title="Croissant">
+        <i class="pi pi-sort-amount-up-alt"></i>
+      </button>
+      <button class="sort-btn" [class.active]="sortPrice === 'desc'"
+              (click)="toggleSortPrice()" title="Décroissant">
+        <i class="pi pi-sort-amount-down"></i>
+      </button>
+    </div>
+
+    <div class="filter-separator"></div>
+
+    <div class="date-filter">
+      <p-calendar [(ngModel)]="dateFrom" dateFormat="dd/mm/yy"
+                  [placeholder]="'common.dateFrom' | translate"
+                  [showIcon]="false" styleClass="date-cal"
+                  (onSelect)="onDateChange()" (onClearClick)="onDateChange()">
+      </p-calendar>
+      <span class="date-sep">→</span>
+      <p-calendar [(ngModel)]="dateTo" dateFormat="dd/mm/yy"
+                  [placeholder]="'common.dateTo' | translate"
+                  [showIcon]="false" styleClass="date-cal"
+                  (onSelect)="onDateChange()" (onClearClick)="onDateChange()">
+      </p-calendar>
+      <button *ngIf="dateFrom || dateTo" pButton icon="pi pi-times"
+              class="p-button-text p-button-sm p-button-secondary"
+              (click)="clearDates()"></button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <p-table [value]="displayed" [(selection)]="selectedOps" [loading]="loading"
+             responsiveLayout="scroll" [paginator]="true" [rows]="20" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:40px"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+          <th style="width:120px">{{ 'operations.date' | translate }}</th>
+          <th>{{ 'operations.name' | translate }}</th>
+          <th>{{ 'operations.context' | translate }}</th>
+          <th style="width:90px" class="text-center">{{ 'operations.category' | translate }}</th>
+          <th class="text-right" style="width:150px">{{ 'operations.amount' | translate }}</th>
+          <th style="width:100px">{{ 'operations.status' | translate }}</th>
+          <th class="actions-col"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-op>
+        <tr>
+          <td><p-tableCheckbox [value]="op"></p-tableCheckbox></td>
+          <td>{{ op.date | date:'dd/MM/yyyy' }}</td>
+          <td>{{ op.name }}</td>
+          <td>{{ op.context }}</td>
+          <td class="text-center">
+            <i [class]="op.category === 'personal' ? 'pi pi-user cat-personal' : 'pi pi-briefcase cat-business'"
+               [pTooltip]="(op.category === 'personal' ? 'operations.personal' : 'operations.business') | translate">
+            </i>
+          </td>
+          <td class="text-right amount">{{ op.amount | number:'1.2-2' }} MAD</td>
+          <td>
+            <p-tag [value]="('operations.status_' + op.status) | translate"
+                   [severity]="statusSeverity(op.status)">
+            </p-tag>
+          </td>
+          <td class="actions-col">
+            <div class="row-actions">
+              <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"
+                      (click)="router.navigate(['/operations', op._id])"></button>
+              <button *ngIf="op.status === 'open'" pButton icon="pi pi-check"
+                      class="p-button-text p-button-sm p-button-success"
+                      [pTooltip]="'operations.markAsPaid' | translate"
+                      (click)="markAsPaid(op)"></button>
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"
+                      (click)="router.navigate(['/operations', op._id, 'edit'])"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                      (click)="confirmDelete(op)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let i of [1,2,3,4,5]">
+          <td><p-skeleton width="2rem"></p-skeleton></td>
+          <td><p-skeleton width="7rem"></p-skeleton></td>
+          <td><p-skeleton></p-skeleton></td>
+          <td><p-skeleton></p-skeleton></td>
+          <td><p-skeleton width="3rem"></p-skeleton></td>
+          <td><p-skeleton width="5rem"></p-skeleton></td>
+          <td><p-skeleton width="4rem"></p-skeleton></td>
+          <td><p-skeleton width="5rem"></p-skeleton></td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="8" class="text-center">{{ 'common.noData' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

@@ -1,0 +1,43 @@
+<div class="page">
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text"
+            (click)="router.navigate(['/products'])"></button>
+    <h2>{{ (isEdit ? 'products.editProduct' : 'products.newProduct') | translate }}</h2>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+
+        <div class="field">
+          <label>{{ 'products.ref' | translate }} *</label>
+          <input pInputText formControlName="ref" class="w-full"
+                 [class.ng-invalid]="form.get('ref')?.invalid && form.get('ref')?.touched" />
+        </div>
+
+        <div class="field col-span-2">
+          <label>{{ 'products.designation' | translate }} *</label>
+          <input pInputText formControlName="designation" class="w-full"
+                 [class.ng-invalid]="form.get('designation')?.invalid && form.get('designation')?.touched" />
+        </div>
+
+        <div class="field">
+          <label>{{ 'products.unitPriceHt' | translate }} *</label>
+          <p-inputNumber formControlName="unit_price_ht" mode="decimal"
+                         [minFractionDigits]="2" [maxFractionDigits]="2"
+                         styleClass="w-full"
+                         [class.ng-invalid]="form.get('unit_price_ht')?.invalid && form.get('unit_price_ht')?.touched">
+          </p-inputNumber>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button pButton type="button" [label]="'common.cancel' | translate"
+                class="p-button-outlined" (click)="router.navigate(['/products'])"></button>
+        <button pButton type="submit" [label]="'common.save' | translate"
+                [loading]="saving"></button>
+      </div>
+    </form>
+  </div>
+</div>

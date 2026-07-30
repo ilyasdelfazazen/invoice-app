@@ -1,0 +1,197 @@
+<p-toast></p-toast>
+<div class="page">
+  <div class="page-header">
+    <h2>{{ 'nav.settings' | translate }}</h2>
+  </div>
+
+  <p-tabView styleClass="settings-tabs">
+
+    <!-- ── Tab 1: Société ───────────────────────────────── -->
+    <p-tabPanel [header]="'settings.appInfo' | translate">
+      <form [formGroup]="appForm" (ngSubmit)="saveApp()">
+
+        <div class="logo-section">
+          <div class="logo-preview" [class.has-logo]="logoPreview">
+            <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo" />
+            <img *ngIf="!logoPreview" src="assets/defaultImages/logo.png" alt="Default Logo" class="logo-default" />
+          </div>
+          <div class="logo-actions">
+            <label class="upload-btn p-button p-button-outlined p-button-sm" for="logoInput">
+              <i class="pi pi-upload"></i>
+              {{ 'settings.logo' | translate }}
+            </label>
+            <input id="logoInput" type="file" accept="image/*" hidden (change)="onLogoSelect($event)" />
+            <button *ngIf="logoPreview" pButton type="button" icon="pi pi-trash"
+                    class="p-button-text p-button-danger p-button-sm"
+                    (click)="removeLogo()"></button>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="form-grid">
+
+          <div class="field col-span-2">
+            <label>{{ 'settings.companyName' | translate }} *</label>
+            <input pInputText formControlName="name" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.telephone' | translate }}</label>
+            <input pInputText formControlName="telephone" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.email' | translate }}</label>
+            <input pInputText formControlName="email" class="w-full" />
+          </div>
+
+          <div class="field col-span-2">
+            <label>{{ 'settings.address' | translate }}</label>
+            <input pInputText formControlName="address" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.ice' | translate }}</label>
+            <input pInputText formControlName="ice" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.rc' | translate }}</label>
+            <input pInputText formControlName="rc" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.if' | translate }}</label>
+            <input pInputText formControlName="if" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.cnss' | translate }}</label>
+            <input pInputText formControlName="cnss" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.tp' | translate }}</label>
+            <input pInputText formControlName="tp" class="w-full" />
+          </div>
+
+          <div class="field">
+            <label>{{ 'settings.bankName' | translate }}</label>
+            <input pInputText formControlName="bank_name" class="w-full" />
+          </div>
+
+          <div class="field col-span-2">
+            <label>{{ 'settings.bankRib' | translate }}</label>
+            <input pInputText formControlName="bank_rib" class="w-full" />
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button pButton type="submit" [label]="'common.save' | translate" [loading]="savingApp"></button>
+        </div>
+      </form>
+    </p-tabPanel>
+
+    <!-- ── Tab 2: Préférences ────────────────────────────── -->
+    <p-tabPanel [header]="'settings.preferences' | translate">
+
+      <div class="pref-section">
+        <h4 class="pref-title">{{ 'settings.language' | translate }}</h4>
+        <div class="option-buttons">
+          <button *ngFor="let lang of languages"
+                  class="opt-btn" [class.active]="currentLang === lang.value"
+                  (click)="setLanguage(lang.value)">
+            <img [src]="'assets/flags/' + lang.flag + '.svg'" class="flag-img" [alt]="lang.label"> {{ lang.label }}
+          </button>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="pref-section">
+        <h4 class="pref-title">{{ 'settings.theme' | translate }}</h4>
+        <div class="option-buttons">
+          <button class="opt-btn" [class.active]="isDark"
+                  (click)="isDark || toggleDark()">
+            <i class="pi pi-moon"></i> {{ 'settings.darkMode' | translate }}
+          </button>
+          <button class="opt-btn" [class.active]="!isDark"
+                  (click)="!isDark || toggleDark()">
+            <i class="pi pi-sun"></i> {{ 'settings.lightMode' | translate }}
+          </button>
+        </div>
+      </div>
+
+    </p-tabPanel>
+
+    <!-- ── Tab 3: Sécurité ───────────────────────────────── -->
+    <p-tabPanel [header]="'settings.security' | translate">
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
+
+        <div class="field">
+          <label>{{ 'settings.currentPassword' | translate }} *</label>
+          <p-password formControlName="currentPassword" [feedback]="false"
+                      styleClass="w-full" [toggleMask]="true"></p-password>
+        </div>
+
+        <div class="field">
+          <label>{{ 'settings.newPassword' | translate }} *</label>
+          <p-password formControlName="newPassword"
+                      styleClass="w-full" [toggleMask]="true"></p-password>
+        </div>
+
+        <div class="field">
+          <label>{{ 'settings.confirmPassword' | translate }} *</label>
+          <p-password formControlName="confirmPassword" [feedback]="false"
+                      styleClass="w-full" [toggleMask]="true"></p-password>
+          <small *ngIf="$any(passwordForm.get('confirmPassword')?.errors)?.mismatch" class="error-text">
+            {{ 'settings.passwordMismatch' | translate }}
+          </small>
+        </div>
+
+        <div class="form-actions">
+          <button pButton type="submit" [label]="'settings.changePassword' | translate"
+                  [loading]="savingPassword"></button>
+        </div>
+      </form>
+    </p-tabPanel>
+
+    <!-- ── Tab 4: Télécharger ───────────────────────────── -->
+    <p-tabPanel [header]="'settings.download' | translate">
+      <div class="download-grid">
+
+        <!-- Android -->
+        <div class="download-card">
+          <div class="download-icon android-icon">
+            <i class="pi pi-mobile"></i>
+          </div>
+          <h3 class="download-title">Android</h3>
+          <p class="download-desc">{{ 'settings.downloadAndroidDesc' | translate }}</p>
+          <a class="p-button p-button-success download-btn"
+             href="assets/files/app.apk" download="SCE Manager.apk">
+            <i class="pi pi-download"></i>
+            {{ 'settings.downloadAndroidBtn' | translate }}
+          </a>
+        </div>
+
+        <!-- iOS -->
+        <div class="download-card">
+          <div class="download-icon ios-icon">
+            <i class="pi pi-apple"></i>
+          </div>
+          <h3 class="download-title">iOS</h3>
+          <p class="download-desc">{{ 'settings.downloadIosDesc' | translate }}</p>
+          <a class="p-button download-btn"
+             [href]="appStoreUrl" target="_blank" rel="noopener noreferrer">
+            <i class="pi pi-external-link"></i>
+            {{ 'settings.downloadIosBtn' | translate }}
+          </a>
+        </div>
+
+      </div>
+    </p-tabPanel>
+
+  </p-tabView>
+</div>

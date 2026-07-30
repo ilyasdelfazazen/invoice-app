@@ -1,0 +1,35 @@
+<div class="page">
+  <div class="page-header">
+    <ion-button fill="clear" (click)="router.navigate(['/products'])">
+      <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <h2>{{ (isEdit ? 'products.editProduct' : 'products.newProduct') | translate }}</h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list class="form-card">
+      <ion-item>
+        <ion-label position="floating">{{ 'products.ref' | translate }} *</ion-label>
+        <ion-input formControlName="ref"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'products.designation' | translate }} *</ion-label>
+        <ion-input formControlName="designation"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">{{ 'products.unitPriceHt' | translate }} *</ion-label>
+        <ion-input formControlName="unit_price_ht" type="number" step="0.01"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div class="form-actions">
+      <ion-button fill="outline" type="button" (click)="router.navigate(['/products'])">
+        {{ 'common.cancel' | translate }}
+      </ion-button>
+      <ion-button type="submit" [disabled]="form.invalid || saving">
+        <ion-spinner *ngIf="saving" name="crescent" slot="start"></ion-spinner>
+        {{ 'common.save' | translate }}
+      </ion-button>
+    </div>
+  </form>
+</div>

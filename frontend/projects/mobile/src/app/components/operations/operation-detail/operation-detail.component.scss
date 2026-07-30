@@ -1,0 +1,29 @@
+.status-row {
+  margin-bottom: 16px;
+}
+
+.status-badge {
+  font-size: var(--font-size-sm);
+  padding: 4px 12px;
+}
+
+.detail-card {
+  border-radius: var(--radius-md);
+}
+
+.field-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 2px;
+}
+
+.amount {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.cat-icon {
+  vertical-align: middle;
+  margin-right: 6px;
+}

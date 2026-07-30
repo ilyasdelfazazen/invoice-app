@@ -1,0 +1,60 @@
+<div class="page">
+  <div class="page-header">
+    <ion-icon name="people-outline" class="section-icon"></ion-icon>
+    <h2>{{ 'clients.title' | translate }}</h2>
+    <ion-button size="small" (click)="router.navigate(['/clients/new'])">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      {{ 'clients.new' | translate }}
+    </ion-button>
+  </div>
+
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="onSearch($event.target?.value || '')"
+    [placeholder]="'common.search' | translate"
+    debounce="0">
+  </ion-searchbar>
+
+  <div class="sort-bar">
+    <button class="sort-btn" [class.active]="sortField === 'name'" (click)="setSort('name')">
+      {{ 'clients.name' | translate }}
+      <ion-icon [name]="sortField === 'name' && sortDir === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+    <button class="sort-btn" [class.active]="sortField === 'company'" (click)="setSort('company')">
+      {{ 'clients.company' | translate }}
+      <ion-icon [name]="sortField === 'company' && sortDir === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+    <button class="sort-btn" [class.active]="sortField === 'city'" (click)="setSort('city')">
+      {{ 'clients.city' | translate }}
+      <ion-icon [name]="sortField === 'city' && sortDir === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="skeleton-list">
+    <ion-item *ngFor="let i of [1,2,3,4,5]">
+      <ion-skeleton-text animated style="width:60%"></ion-skeleton-text>
+    </ion-item>
+  </div>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let client of displayed" class="client-item" detail="false" (click)="router.navigate(['/clients', client._id])">
+      <ion-label>
+        <h3>{{ client.name }}</h3>
+        <p>{{ client.company }}</p>
+        <p class="text-muted">{{ client.city }} <span *ngIf="client.ice">· ICE: {{ client.ice }}</span></p>
+      </ion-label>
+      <div slot="end" class="row-actions">
+        <ion-button fill="clear" size="small" (click)="$event.stopPropagation(); router.navigate(['/clients', client._id, 'edit'])">
+          <ion-icon name="pencil-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" color="danger" (click)="$event.stopPropagation(); confirmDelete(client)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-item>
+
+    <ion-item *ngIf="displayed.length === 0">
+      <ion-label class="ion-text-center text-muted">{{ 'common.noResults' | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+</div>

@@ -1,0 +1,334 @@
+/* Ionic core CSS — required for layout */
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Ionic optional utilities */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/flex-utils.css";
+@import "@ionic/angular/css/text-alignment.css";
+
+/* Shared design tokens */
+@import '../../../libs/styles/index';
+
+/* ─── Ionic CSS variable mapping — light mode ─────────────────────── */
+:root {
+  --ion-font-family: var(--font-family);
+  --ion-background-color: var(--color-bg);
+  --ion-text-color: var(--color-text);
+  --ion-border-color: var(--color-border);
+  --ion-item-background: var(--color-surface);
+  --ion-card-background: var(--color-surface);
+  --ion-toolbar-background: var(--color-nav-bg);
+  --ion-toolbar-color: #ffffff;
+  --ion-tab-bar-background: var(--color-nav-bg);
+  --ion-tab-bar-border-color: transparent;
+  --ion-tab-bar-color: rgba(255, 255, 255, 0.5);
+  --ion-tab-bar-color-selected: var(--color-secondary);
+  --ion-color-primary: var(--color-primary);
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-secondary: var(--color-secondary);
+  --ion-color-success: var(--color-success);
+  --ion-color-warning: var(--color-warning);
+  --ion-color-danger: var(--color-danger);
+}
+
+/* ─── Ionic CSS variable mapping — dark mode ──────────────────────── */
+body.dark {
+  --ion-background-color: #111827;
+  --ion-background-color-rgb: 17, 24, 39;
+  --ion-text-color: #f9fafb;
+  --ion-text-color-rgb: 249, 250, 251;
+  --ion-border-color: #374151;
+  --ion-item-background: #1f2937;
+  --ion-card-background: #1f2937;
+  --ion-toolbar-background: var(--color-nav-bg);
+  --ion-toolbar-color: #f9fafb;
+  --ion-toolbar-border-color: var(--color-primary-light);
+  --ion-tab-bar-background: var(--color-nav-bg);
+  --ion-tab-bar-border-color: var(--color-primary-light);
+  --ion-tab-bar-color: #9ca3af;
+  --ion-tab-bar-color-selected: var(--color-secondary);
+  /* Keep primary Ionic color as original navy so buttons/outlines remain visible */
+  --ion-color-primary: #3D4167;
+  --ion-color-primary-rgb: 61, 65, 103;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: #252838;
+  --ion-color-primary-tint: #565A80;
+  --ion-color-step-50:  #1a2130;
+  --ion-color-step-100: #1f2937;
+  --ion-color-step-150: #253040;
+  --ion-color-step-200: #2a3848;
+  --ion-color-step-250: #2f4050;
+  --ion-color-step-300: #354858;
+  --ion-color-step-350: #3a5060;
+  --ion-color-step-400: #405870;
+  --ion-color-step-450: #4b6080;
+  --ion-color-step-500: #6b7280;
+  --ion-color-step-550: #9ca3af;
+  --ion-color-step-600: #d1d5db;
+  --ion-color-step-650: #e5e7eb;
+  --ion-color-step-700: #f3f4f6;
+  --ion-color-step-750: #f9fafb;
+  --ion-color-step-800: #ffffff;
+}
+
+/* ─── Global page layout ──────────────────────────────────────────── */
+.page {
+  padding: 16px;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  h2 {
+    flex: 1;
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .section-icon {
+    font-size: 22px;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+}
+
+/* ─── Detail card (shared across list pages) ──────────────────────── */
+.detail-card {
+  border-radius: var(--radius-md) !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+
+/* ─── Ref badge (shared) ──────────────────────────────────────────── */
+.ref-badge {
+  display: inline-block;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Sort bar (shared) ───────────────────────────────────────────── */
+.sort-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+
+  .sort-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 10px;
+    height: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    ion-icon { font-size: 12px; }
+
+    &.active {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+/* ─── Row actions ─────────────────────────────────────────────────── */
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* ─── Form actions ────────────────────────────────────────────────── */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0 24px;
+
+  ion-button { flex: 1; }
+}
+
+/* ─── Skeleton list ───────────────────────────────────────────────── */
+.skeleton-list ion-item {
+  --background: var(--color-surface);
+}
+
+/* ─── Field label (inside detail cards) ──────────────────────────── */
+.field-label, .label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 2px;
+}
+
+/* ─── Amount display ──────────────────────────────────────────────── */
+.amount {
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+/* ─── Surface cards (used across dashboard / detail) ─────────────── */
+.surface-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ─── ion-list / ion-item card style ─────────────────────────────── */
+ion-list {
+  background: transparent !important;
+  --background: transparent;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+ion-item {
+  --background: var(--color-surface);
+  --border-color: transparent;
+  --border-width: 0;
+  --inner-border-width: 0;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --inner-padding-end: 8px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  .label, .field-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  ion-label h2, ion-label h3 {
+    font-size: var(--font-size-md) !important;
+    font-weight: 400 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+ion-item-sliding {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ─── ion-searchbar ──────────────────────────────────────────────── */
+ion-searchbar {
+  --box-shadow: none;
+  --border-radius: var(--radius-md);
+  --background: var(--color-surface) !important;
+  --color: var(--color-text) !important;
+  --placeholder-color: var(--color-text-muted) !important;
+  --icon-color: var(--color-text-muted) !important;
+  --clear-button-color: var(--color-text-muted) !important;
+  margin-bottom: 12px;
+  padding: 0 !important;
+}
+
+/* ─── Date inputs — dark mode safe ───────────────────────────────── */
+.date-input {
+  border-color: var(--color-border) !important;
+  color: var(--color-text-muted);
+  --color: var(--color-text-muted);
+  --placeholder-color: var(--color-text-muted);
+}
+
+body.dark .date-input {
+  color-scheme: dark;
+}
+
+/* ─── Filter selects — dark mode safe ────────────────────────────── */
+.filter-select {
+  border-color: var(--color-border) !important;
+  color: var(--color-text-muted);
+  --color: var(--color-text-muted);
+}
+
+/* ─── Action sheet / select popover / alert — dark mode ─────────── */
+body.dark ion-action-sheet {
+  --background: var(--color-surface);
+  --button-color: var(--color-text);
+  --button-background: var(--color-surface);
+  --button-background-hover: var(--color-border);
+  --color: var(--color-text);
+}
+
+body.dark ion-select-popover {
+  --background: var(--color-surface);
+  --color: var(--color-text);
+
+  ion-item {
+    --background: var(--color-surface);
+    --color: var(--color-text);
+  }
+}
+
+body.dark ion-alert {
+  --background: var(--color-surface);
+  --color: var(--color-text);
+}
+
+/* ─── Action buttons — primary color in dark mode ────────────────── */
+body.dark .page-header ion-button[fill="clear"],
+body.dark .detail-meta ion-button[fill="clear"],
+body.dark .row-actions ion-button[fill="clear"] {
+  --color: var(--color-primary);
+}
+
+/* ─── Floating input labels — visible in dark mode ───────────────── */
+body.dark ion-label {
+  --color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+/* ─── Prevent iOS auto-zoom on input focus ───────────────────────── */
+body.ios input,
+body.ios ion-input input,
+body.ios ion-textarea textarea,
+body.ios ion-select,
+body.ios ion-searchbar input {
+  font-size: 16px !important;
+}
+
+/* ─── iOS safe area ───────────────────────────────────────────────── */
+/* viewport-fit=cover in index.html makes env() return real values.  */
+/* Ionic reads --ion-safe-area-top (set in structure.css) and applies */
+/* it to ion-header automatically — no manual header overrides needed. */
+body.ios ion-content {
+  --padding-bottom: env(safe-area-inset-bottom);
+}
+
+body.ios ion-tab-bar {
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(56px + env(safe-area-inset-bottom)) !important;
+}

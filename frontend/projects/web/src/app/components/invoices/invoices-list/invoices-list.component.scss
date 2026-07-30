@@ -1,0 +1,32 @@
+.row-actions {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-end;
+}
+
+.invoice-num {
+  color: var(--color-primary);
+  font-family: monospace;
+  letter-spacing: 0.02em;
+}
+
+.amount {
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.type-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--color-border, #e5e7eb);
+  color: var(--color-text-muted);
+
+  &.is-facture {
+    background: var(--color-secondary);
+    color: #fff;
+  }
+}

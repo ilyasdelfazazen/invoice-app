@@ -1,0 +1,88 @@
+<div class="page">
+  <div class="page-header">
+    <h2>{{ 'products.title' | translate }}</h2>
+    <button pButton icon="pi pi-plus" [label]="'products.newProduct' | translate"
+            (click)="router.navigate(['/products/new'])"></button>
+  </div>
+
+  <div class="filters-bar">
+    <span class="p-input-icon-left" style="display:block; max-width:300px">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [formControl]="searchControl"
+             [placeholder]="'common.search' | translate" style="width:100%" />
+    </span>
+
+    <div class="filter-separator"></div>
+
+    <div class="sort-group">
+      <span class="sort-label">{{ 'products.designation' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortName === 'asc'"
+              (click)="toggleSortName()" title="A → Z">
+        <i class="pi pi-sort-alpha-down"></i>
+      </button>
+      <button class="sort-btn" [class.active]="sortName === 'desc'"
+              (click)="toggleSortName()" title="Z → A">
+        <i class="pi pi-sort-alpha-up-alt"></i>
+      </button>
+    </div>
+
+    <div class="sort-group">
+      <span class="sort-label">{{ 'common.price' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortPrice === 'asc'"
+              (click)="toggleSortPrice()" title="Croissant">
+        <i class="pi pi-sort-amount-up-alt"></i>
+      </button>
+      <button class="sort-btn" [class.active]="sortPrice === 'desc'"
+              (click)="toggleSortPrice()" title="Décroissant">
+        <i class="pi pi-sort-amount-down"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <p-table [value]="displayed" [loading]="loading" responsiveLayout="scroll"
+             [paginator]="true" [rows]="15" styleClass="p-datatable-sm p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:120px">{{ 'products.ref' | translate }}</th>
+          <th>{{ 'products.designation' | translate }}</th>
+          <th class="text-right" style="width:140px">{{ 'products.unitPriceHt' | translate }}</th>
+          <th class="actions-col"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-product>
+        <tr>
+          <td><span class="ref-badge">{{ product.ref }}</span></td>
+          <td>{{ product.designation }}</td>
+          <td class="text-right amount">{{ product.unit_price_ht | number:'1.2-2' }} MAD</td>
+          <td class="actions-col">
+            <div class="row-actions">
+              <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"
+                      (click)="router.navigate(['/products', product._id])"></button>
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"
+                      (click)="router.navigate(['/products', product._id, 'edit'])"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                      (click)="confirmDelete(product)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let i of [1,2,3,4,5]">
+          <td><p-skeleton width="6rem"></p-skeleton></td>
+          <td><p-skeleton></p-skeleton></td>
+          <td><p-skeleton width="5rem"></p-skeleton></td>
+          <td><p-skeleton width="4rem"></p-skeleton></td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="4" class="text-center">{{ 'common.noData' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

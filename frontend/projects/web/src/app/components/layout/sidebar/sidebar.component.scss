@@ -1,0 +1,105 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  height: 100vh;
+  width: 240px;
+  background: var(--color-surface);
+  border-inline-end: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+
+  &.collapsed {
+    width: 64px;
+
+    .nav-item span { display: none; }
+  }
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  min-height: 64px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-logo-icon {
+  font-size: 22px;
+  color: var(--color-primary);
+}
+
+
+.nav-list {
+  flex: 1;
+  list-style: none;
+  padding: var(--spacing-sm) 0;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 0.75rem var(--spacing-md);
+  color: var(--color-text-muted);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: start;
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  font-family: var(--font-family);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  margin: 2px var(--spacing-xs);
+  width: calc(100% - var(--spacing-xs) * 2);
+  transition: var(--transition-fast);
+
+  i { font-size: 17px; flex-shrink: 0; }
+
+  span { white-space: nowrap; }
+
+  &:hover {
+    background: var(--color-surface);
+    color: var(--color-primary);
+  }
+
+  &.active {
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+}
+
+.sidebar-footer {
+  padding: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+
+  .logout-btn {
+    color: var(--color-danger);
+
+    &:hover { background: rgba(230, 57, 70, 0.08); }
+  }
+}

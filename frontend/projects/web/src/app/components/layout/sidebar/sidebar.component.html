@@ -1,0 +1,25 @@
+<nav class="sidebar" [class.collapsed]="collapsed">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <img [src]="appLogo" alt="logo" class="brand-logo-img" />
+    </div>
+  </div>
+
+  <ul class="nav-list">
+    <li *ngFor="let item of navItems">
+      <a [routerLink]="item.route" routerLinkActive="active" class="nav-item"
+         [pTooltip]="collapsed ? (item.label | translate) : ''" tooltipPosition="right">
+        <i [class]="item.icon"></i>
+        <span *ngIf="!collapsed">{{ item.label | translate }}</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <button class="nav-item logout-btn" (click)="logout()"
+            [pTooltip]="collapsed ? ('nav.logout' | translate) : ''" tooltipPosition="right">
+      <i class="pi pi-sign-out"></i>
+      <span *ngIf="!collapsed">{{ 'nav.logout' | translate }}</span>
+    </button>
+  </div>
+</nav>

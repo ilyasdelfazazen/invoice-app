@@ -1,0 +1,81 @@
+:root {
+  // ─── Brand – Navy Blue ────────────────────────────────────────
+  --color-primary:          #252838;   // Navy 600 — BASE
+  --color-primary-light:    #3D4167;   // Navy 500
+  --color-primary-lighter:  #565A80;   // Navy 400
+  --color-primary-dark:     #1C1F2C;   // Navy 700
+  --color-primary-50:       #E8E9EF;   // Navy 50 (tint)
+  --color-nav-bg:           #252838;   // Fixed nav color — never changes in dark mode
+
+  // ─── Brand – Yellow ──────────────────────────────────────────
+  --color-secondary:        #F5C800;   // Yellow 500 — BASE
+  --color-secondary-dark:   #D4AC00;   // Yellow 600
+  --color-secondary-light:  #FFD82E;   // Yellow 400
+  --color-secondary-50:     #FFFCE8;   // Yellow 50 (tint)
+
+  // ─── Accent (yellow-based) ───────────────────────────────────
+  --color-accent:           #D4AC00;   // Yellow 600 — hover/accent
+
+  // ─── Semantic ────────────────────────────────────────────────
+  --color-danger:           #E63946;
+  --color-warning:          #F4A261;
+  --color-success:          #22C55E;
+  --color-info:             #3B82F6;
+
+  // ─── Surfaces ────────────────────────────────────────────────
+  --color-bg:               #F8F5F0;
+  --color-surface:          #FFFFFF;
+  --color-overlay:          rgba(0, 0, 0, 0.5);
+
+  // ─── Text ────────────────────────────────────────────────────
+  --color-text:             #1A1A1A;
+  --color-text-muted:       #6B6B6B;
+  --color-border:           #E5E7EB;
+
+  // ─── Typography ──────────────────────────────────────────────
+  --font-family:            'Inter', sans-serif;
+  --font-family-arabic:     'Cairo', sans-serif;
+  --font-size-sm:           12px;
+  --font-size-md:           14px;
+  --font-size-lg:           18px;
+  --font-size-xl:           24px;
+  --font-size-2xl:          32px;
+
+  // ─── Spacing ─────────────────────────────────────────────────
+  --spacing-xs:   4px;
+  --spacing-sm:   8px;
+  --spacing-md:  16px;
+  --spacing-lg:  24px;
+  --spacing-xl:  40px;
+
+  // ─── Border radius ───────────────────────────────────────────
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+
+  // ─── Shadows ─────────────────────────────────────────────────
+  --shadow-sm:  0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.12);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.16);
+
+  // ─── Transitions ─────────────────────────────────────────────
+  --transition-fast: all 0.15s ease;
+  --transition:      all 0.25s ease;
+  --transition-slow: all 0.4s ease;
+}
+
+body.dark {
+  --color-bg:          #111827;
+  --color-surface:     #1F2937;
+  --color-overlay:     rgba(0, 0, 0, 0.7);
+  --color-text:        #F9FAFB;
+  --color-text-muted:  #9CA3AF;
+  --color-border:      #374151;
+
+  // In dark mode use lighter navy shades so active/highlight states are visible
+  --color-primary:         #9EA1B8;   // Navy 200 — readable on dark bg
+  --color-primary-light:   #C4C6D4;   // Navy 100
+  --color-primary-lighter: #E8E9EF;   // Navy 50
+  --color-primary-50:      rgba(158, 161, 184, 0.15);  // tint for active bg
+}

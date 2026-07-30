@@ -1,0 +1,225 @@
+<div class="page invoice-detail">
+
+  <!-- Page header with action buttons -->
+  <div class="page-header" [class.editing]="editingFacture">
+    <ion-button fill="clear" size="small" (click)="router.navigate(['/invoices'])">
+      <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+
+    <span class="invoice-title" *ngIf="!editingNumero">{{ editingFacture ? ('invoices.editMode' | translate) : invoice.numero }}</span>
+
+    <!-- Inline numero edit -->
+    <div class="numero-edit" *ngIf="editingNumero && !editingFacture">
+      <ion-input [(ngModel)]="numeroInput"
+                 (keyup.enter)="saveNumero()"
+                 (keyup.escape)="cancelEditNumero()"
+                 autofocus class="numero-input"></ion-input>
+      <ion-button fill="clear" size="small" color="success" [disabled]="savingNumero" (click)="saveNumero()">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" size="small" (click)="cancelEditNumero()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="header-actions">
+      <ng-container *ngIf="!editingFacture">
+        <ion-button fill="clear" size="small" (click)="toggleType()" [disabled]="switchingType"
+                    [title]="'invoices.switchType' | translate">
+          <ion-icon slot="icon-only" [name]="switchingType ? 'reload-outline' : 'swap-horizontal-outline'"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="invoice.type === 'facture'" fill="clear" size="small" (click)="enterFactureEdit()">
+          <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" (click)="downloadPdf()" [disabled]="generatingPdf">
+          <ion-icon slot="icon-only" [name]="generatingPdf ? 'reload-outline' : 'download-outline'"></ion-icon>
+        </ion-button>
+      </ng-container>
+      <ng-container *ngIf="editingFacture">
+        <ion-button fill="clear" size="small" color="medium" [disabled]="savingFacture" (click)="cancelFactureEdit()">
+          <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="solid" size="small" color="success" [disabled]="savingFacture" (click)="saveFacture()">
+          <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+        </ion-button>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- TYPE BADGE + numero edit trigger -->
+  <div class="detail-meta" *ngIf="!editingFacture">
+    <span class="type-badge" [class.is-facture]="invoice.type === 'facture'">
+      <ion-icon [name]="invoice.type === 'facture' ? 'document-text-outline' : 'document-outline'"></ion-icon>
+      {{ invoice.type === 'facture' ? ('invoices.typeFacture' | translate) : ('invoices.typeProforma' | translate) }}
+    </span>
+    <ion-button *ngIf="!editingNumero" fill="clear" size="small" (click)="startEditNumero()">
+      <ion-icon slot="start" name="create-outline"></ion-icon>
+      {{ 'invoices.numero' | translate }}
+    </ion-button>
+  </div>
+
+  <!-- VIEW MODE -->
+  <ng-container *ngIf="!editingFacture">
+    <ion-list class="detail-card">
+      <ion-item>
+        <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <p class="field-label">{{ 'invoices.date' | translate }}</p>
+          <h3>{{ invoice.date | date:'dd/MM/yyyy' }}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="business-outline" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <p class="field-label">{{ 'invoices.client' | translate }}</p>
+          <h3>
+            <strong>{{ $any(invoice.client_id)?.name }}</strong>
+            <span *ngIf="$any(invoice.client_id)?.company" class="client-sub"> — {{ $any(invoice.client_id)?.company }}</span>
+          </h3>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="card-outline" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <p class="field-label">{{ 'invoices.paymentMode' | translate }}</p>
+          <h3>{{ invoice.payment_mode }}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="invoice.payment_conditions">
+        <ion-icon name="time-outline" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <p class="field-label">{{ 'invoices.paymentConditions' | translate }}</p>
+          <h3>{{ invoice.payment_conditions }}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="invoice.bank_name">
+        <ion-icon name="business-outline" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <p class="field-label">{{ 'invoices.bankName' | translate }}</p>
+          <h3>{{ invoice.bank_name }}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="invoice.bank_rib">
+        <ion-icon name="barcode-outline" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <p class="field-label">{{ 'invoices.bankRib' | translate }}</p>
+          <h3>{{ invoice.bank_rib }}</h3>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Lines -->
+    <div class="lines-card">
+      <div class="lines-header">
+        <span class="col-ref">{{ 'products.ref' | translate }}</span>
+        <span class="col-desc">{{ 'products.designation' | translate }}</span>
+        <span class="col-num text-right">{{ 'invoices.qty' | translate }}</span>
+        <span class="col-num text-right">{{ 'invoices.lineTotal' | translate }}</span>
+      </div>
+      <div class="line-row" *ngFor="let line of lines">
+        <span class="col-ref"><span class="ref-badge">{{ line.ref }}</span></span>
+        <span class="col-desc">{{ line.designation }}</span>
+        <span class="col-num text-right">{{ line.quantity }}</span>
+        <span class="col-num text-right"><strong>{{ line.line_total_ht | number:'1.2-2' }}</strong></span>
+      </div>
+      <div class="divider"></div>
+      <div class="totals">
+        <div class="total-row"><span>{{ 'invoices.totalHt' | translate }}</span><span>{{ invoice.total_ht | number:'1.2-2' }} MAD</span></div>
+        <div class="total-row"><span>{{ 'invoices.tva' | translate }} ({{ invoice.tva_rate * 100 }}%)</span><span>{{ invoice.tva_amount | number:'1.2-2' }} MAD</span></div>
+        <div class="total-row ttc"><span>{{ 'invoices.totalTtc' | translate }}</span><strong>{{ invoice.total_ttc | number:'1.2-2' }} MAD</strong></div>
+      </div>
+    </div>
+
+    <div class="notes-card" *ngIf="invoice.notes">
+      <div class="notes-header">
+        <ion-icon name="chatbox-outline" color="medium"></ion-icon>
+        <p class="field-label">{{ 'invoices.notes' | translate }}</p>
+      </div>
+      <p class="notes-text">{{ invoice.notes }}</p>
+    </div>
+  </ng-container>
+
+  <!-- EDIT MODE -->
+  <ng-container *ngIf="editingFacture">
+    <form [formGroup]="factureForm">
+      <ion-list class="detail-card">
+        <ion-item>
+          <ion-icon name="document-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.numero' | translate }} *</ion-label>
+          <ion-input formControlName="numero"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="calendar-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.date' | translate }} *</ion-label>
+          <ion-input type="date" formControlName="date"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="card-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.paymentMode' | translate }}</ion-label>
+          <ion-select formControlName="payment_mode" interface="action-sheet">
+            <ion-select-option *ngFor="let opt of paymentModeOptions" [value]="opt.value">{{ opt.label }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="time-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.paymentConditions' | translate }}</ion-label>
+          <ion-input formControlName="payment_conditions"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="business-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.bankName' | translate }}</ion-label>
+          <ion-input formControlName="bank_name"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="barcode-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.bankRib' | translate }}</ion-label>
+          <ion-input formControlName="bank_rib"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="calculator-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.tvaRate' | translate }}</ion-label>
+          <ion-input type="number" formControlName="tva_rate" min="0" max="100"></ion-input>
+          <ion-note slot="end" style="align-self: center; font-size: 18px; color: var(--ion-color-medium);">%</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="chatbox-outline" slot="start" color="medium"></ion-icon>
+          <ion-label position="stacked">{{ 'invoices.notes' | translate }}</ion-label>
+          <ion-textarea formControlName="notes" rows="3" auto-grow="true"></ion-textarea>
+        </ion-item>
+      </ion-list>
+
+      <!-- Edit lines -->
+      <div class="lines-edit-card" formArrayName="lines">
+        <div class="edit-line-row" *ngFor="let line of factureLines.controls; let i = index" [formGroupName]="i">
+          <div class="edit-line-top">
+            <span class="ref-badge">{{ line.get('ref')?.value }}</span>
+            <ion-input formControlName="designation" class="edit-line-desc-input"></ion-input>
+          </div>
+          <div class="edit-line-bottom">
+            <span class="edit-line-qty">× {{ line.get('quantity')?.value }}</span>
+            <div class="edit-line-pu">
+              <ion-input type="number" formControlName="unit_price_ht" min="0"
+                         (ionChange)="recalcFactureLine(i)" placeholder="Prix HT"></ion-input>
+            </div>
+            <div class="edit-line-total">
+              <strong>{{ line.get('line_total_ht')?.value | number:'1.2-2' }} MAD</strong>
+            </div>
+            <ion-button fill="clear" color="danger" size="small"
+                        [disabled]="factureLines.length === 1"
+                        (click)="removeFactureLine(i)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit totals -->
+      <div class="totals edit-totals">
+        <div class="total-row"><span>{{ 'invoices.totalHt' | translate }}</span><span>{{ factureTotals.total_ht | number:'1.2-2' }} MAD</span></div>
+        <div class="total-row"><span>{{ 'invoices.tva' | translate }} ({{ factureForm.get('tva_rate')?.value }}%)</span><span>{{ factureTotals.tva_amount | number:'1.2-2' }} MAD</span></div>
+        <div class="total-row ttc"><span>{{ 'invoices.totalTtc' | translate }}</span><strong>{{ factureTotals.total_ttc | number:'1.2-2' }} MAD</strong></div>
+      </div>
+    </form>
+  </ng-container>
+
+</div>

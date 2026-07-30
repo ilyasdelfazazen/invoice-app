@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+
+  frontend:
+    container_name: scemanager-frontend-1
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - scemanager-net
+    restart: unless-stopped
+
+  backend:
+    container_name: scemanager-backend-1
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env.production
+    depends_on:
+      - mongo
+    networks:
+      - scemanager-net
+    restart: unless-stopped
+
+  mongo:
+    container_name: scemanager-mongo-1
+    image: mongo:7
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - scemanager-net
+    restart: unless-stopped
+
+networks:
+  scemanager-net:
+
+volumes:
+  mongo-data:

@@ -1,0 +1,215 @@
+.page { max-width: 860px; }
+
+// ── TabView shell ─────────────────────────────────────────────
+::ng-deep .settings-tabs {
+  .p-tabview-nav {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+
+    li .p-tabview-nav-link {
+      background: transparent !important;
+      color: var(--color-text-muted) !important;
+      border-color: transparent !important;
+      font-weight: 500;
+      font-size: var(--font-size-md);
+      padding: 0.85rem 1.25rem;
+      transition: var(--transition-fast);
+
+      &:hover { color: var(--color-primary) !important; }
+    }
+
+    li.p-highlight .p-tabview-nav-link {
+      color: var(--color-primary) !important;
+      border-bottom-color: var(--color-primary) !important;
+      font-weight: 600;
+    }
+  }
+
+  .p-tabview-panels {
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    padding: var(--spacing-lg);
+  }
+}
+
+// ── Logo upload ───────────────────────────────────────────────
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.logo-preview {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img { width: 100%; height: 100%; object-fit: contain; }
+
+  &.has-logo { border-style: solid; }
+}
+
+.logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+
+  i { font-size: 28px; }
+}
+
+.logo-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.upload-btn {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  user-select: none;
+}
+
+// ── Preference sections ───────────────────────────────────────
+.pref-section {
+  padding: var(--spacing-sm) 0;
+}
+
+.pref-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-md);
+}
+
+.option-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.opt-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.875rem;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text);
+  }
+
+  &.active {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+    font-weight: 600;
+  }
+}
+
+// ── Password form ─────────────────────────────────────────────
+.password-form {
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+
+  .field { margin: 0; }
+}
+
+// ── Download tab ─────────────────────────────────────────────
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+  padding-top: var(--spacing-sm);
+}
+
+.download-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+  background: var(--color-surface);
+  transition: var(--transition-fast);
+
+  &:hover { box-shadow: var(--shadow-md); }
+}
+
+.download-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i { font-size: 28px; }
+
+  &.android-icon {
+    background: rgba(61, 220, 132, 0.12);
+    color: #3ddc84;
+  }
+
+  &.ios-icon {
+    background: rgba(0, 0, 0, 0.07);
+    color: #555;
+  }
+}
+
+.download-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.download-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.download-btn {
+  margin-top: var(--spacing-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+// ── Shared ────────────────────────────────────────────────────
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+}

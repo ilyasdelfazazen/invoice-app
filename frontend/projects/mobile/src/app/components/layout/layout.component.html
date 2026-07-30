@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ currentPageKey | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openLangPicker()" class="lang-btn">
+        <img [src]="currentFlag" slot="icon-only" class="flag-icon" />
+      </ion-button>
+      <ion-button (click)="theme.toggleDark()">
+        <ion-icon slot="icon-only" [name]="theme.isDark() ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+      </ion-button>
+      <ion-button routerLink="/settings">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <router-outlet></router-outlet>
+</ion-content>
+
+<ion-footer>
+  <ion-tab-bar>
+    <ion-tab-button routerLink="/dashboard" routerLinkActive="tab-selected">
+      <ion-icon name="home-outline"></ion-icon>
+      <ion-label>{{ 'nav.dashboard' | translate }}</ion-label>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/invoices" routerLinkActive="tab-selected">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <ion-label>{{ 'nav.invoices' | translate }}</ion-label>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/clients" routerLinkActive="tab-selected">
+      <ion-icon name="people-outline"></ion-icon>
+      <ion-label>{{ 'nav.clients' | translate }}</ion-label>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/products" routerLinkActive="tab-selected">
+      <ion-icon name="cube-outline"></ion-icon>
+      <ion-label>{{ 'nav.products' | translate }}</ion-label>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/operations" routerLinkActive="tab-selected">
+      <ion-icon name="wallet-outline"></ion-icon>
+      <ion-label>{{ 'nav.operations' | translate }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-footer>

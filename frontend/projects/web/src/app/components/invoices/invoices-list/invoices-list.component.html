@@ -1,0 +1,118 @@
+<div class="page">
+  <div class="page-header">
+    <h2>{{ 'nav.invoices' | translate }}</h2>
+    <button pButton icon="pi pi-plus" [label]="'invoices.newInvoice' | translate"
+            (click)="router.navigate(['/invoices/new'])"></button>
+  </div>
+
+  <div class="filters-bar">
+    <!-- Search -->
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [formControl]="searchControl"
+             [placeholder]="'common.search' | translate" style="width:220px" />
+    </span>
+
+    <div class="filter-separator"></div>
+
+    <!-- Price sort -->
+    <div class="sort-group">
+      <span class="sort-label">{{ 'common.price' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortPrice === 'asc'"
+              (click)="toggleSortPrice()" title="Croissant">
+        <i class="pi pi-sort-amount-up-alt"></i>
+      </button>
+      <button class="sort-btn" [class.active]="sortPrice === 'desc'"
+              (click)="toggleSortPrice()" title="Décroissant">
+        <i class="pi pi-sort-amount-down"></i>
+      </button>
+    </div>
+
+    <!-- Société sort -->
+    <div class="sort-group">
+      <span class="sort-label">{{ 'clients.company' | translate }}</span>
+      <button class="sort-btn" [class.active]="sortName === 'asc'"
+              (click)="toggleSortName()" title="A → Z">
+        <i class="pi pi-sort-alpha-up"></i>
+      </button>
+      <button class="sort-btn" [class.active]="sortName === 'desc'"
+              (click)="toggleSortName()" title="Z → A">
+        <i class="pi pi-sort-alpha-down-alt"></i>
+      </button>
+    </div>
+
+    <div class="filter-separator"></div>
+
+    <!-- Date range -->
+    <p-calendar [(ngModel)]="dateFrom" (ngModelChange)="onDateChange()"
+                dateFormat="dd/mm/yy" [showIcon]="false"
+                [placeholder]="'common.dateFrom' | translate"
+                styleClass="date-filter">
+    </p-calendar>
+    <span class="date-sep">→</span>
+    <p-calendar [(ngModel)]="dateTo" (ngModelChange)="onDateChange()"
+                dateFormat="dd/mm/yy" [showIcon]="false"
+                [placeholder]="'common.dateTo' | translate"
+                styleClass="date-filter">
+    </p-calendar>
+    <button *ngIf="dateFrom || dateTo" pButton icon="pi pi-times"
+            class="p-button-text p-button-sm p-button-secondary"
+            (click)="clearDates()">
+    </button>
+  </div>
+
+  <div class="table-card">
+    <p-table [value]="displayed" [loading]="loading" responsiveLayout="scroll"
+             [paginator]="true" [rows]="15" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:130px">{{ 'invoices.numero' | translate }}</th>
+          <th style="width:110px">{{ 'invoices.type' | translate }}</th>
+          <th style="width:120px">{{ 'invoices.date' | translate }}</th>
+          <th>{{ 'clients.company' | translate }}</th>
+          <th class="text-right" style="width:160px">{{ 'invoices.totalTtc' | translate }}</th>
+          <th class="actions-col"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-invoice>
+        <tr>
+          <td><strong class="invoice-num">{{ invoice.numero }}</strong></td>
+          <td>
+            <span class="type-chip" [class.is-facture]="invoice.type === 'facture'">
+              {{ invoice.type === 'facture' ? ('invoices.typeFacture' | translate) : ('invoices.typeProforma' | translate) }}
+            </span>
+          </td>
+          <td>{{ invoice.date | date:'dd/MM/yyyy' }}</td>
+          <td>{{ $any(invoice.client_id)?.company || invoice.code_client }}</td>
+          <td class="text-right amount">{{ invoice.total_ttc | number:'1.2-2' }} MAD</td>
+          <td class="actions-col">
+            <div class="row-actions">
+              <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"
+                      (click)="router.navigate(['/invoices', invoice._id])"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                      (click)="confirmDelete(invoice)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let i of [1,2,3,4,5]">
+          <td><p-skeleton width="7rem"></p-skeleton></td>
+          <td><p-skeleton width="5rem"></p-skeleton></td>
+          <td><p-skeleton width="7rem"></p-skeleton></td>
+          <td><p-skeleton></p-skeleton></td>
+          <td><p-skeleton width="6rem"></p-skeleton></td>
+          <td><p-skeleton width="3rem"></p-skeleton></td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="6" class="text-center">{{ 'common.noData' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

@@ -1,0 +1,46 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <img [src]="appLogo" alt="logo" class="logo-img" />
+      </div>
+      <h2>{{ appName }}</h2>
+      <p class="text-muted">{{ 'auth.login' | translate }}</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="field">
+        <label for="username">{{ 'auth.username' | translate }}</label>
+        <input id="username" type="text" pInputText formControlName="username"
+               [class.ng-invalid]="form.get('username')?.invalid && form.get('username')?.touched"
+               autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label for="password">{{ 'auth.password' | translate }}</label>
+        <div class="password-wrapper">
+          <input id="password" [type]="showPassword ? 'text' : 'password'" pInputText formControlName="password"
+                 [class.ng-invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+                 autocomplete="current-password" />
+          <button type="button" class="eye-btn" (click)="showPassword = !showPassword" tabindex="-1">
+            <i [class]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-msg">
+        {{ error | translate }}
+      </div>
+
+      <button pButton type="submit" [label]="'auth.loginButton' | translate"
+              [loading]="loading" class="w-full mt-2"
+              [disabled]="form.invalid || loading">
+      </button>
+    </form>
+
+    <div *ngIf="lastLogin" class="last-login">
+      <i class="pi pi-clock"></i>
+      {{ 'auth.lastLogin' | translate }}: {{ lastLogin }}
+    </div>
+  </div>
+</div>

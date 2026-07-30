@@ -1,0 +1,81 @@
+<div class="page">
+  <div class="page-header">
+    <ion-icon name="document-text-outline" class="section-icon"></ion-icon>
+    <h2>{{ 'nav.invoices' | translate }}</h2>
+    <ion-button size="small" (click)="router.navigate(['/invoices/new'])">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      {{ 'invoices.newInvoice' | translate }}
+    </ion-button>
+  </div>
+
+  <ion-searchbar
+    [formControl]="searchControl"
+    [placeholder]="'common.search' | translate"
+    debounce="0">
+  </ion-searchbar>
+
+  <div class="sort-bar">
+    <button class="sort-btn" [class.active]="sortPrice !== ''" (click)="toggleSortPrice()">
+      {{ 'common.price' | translate }}
+      <ion-icon [name]="sortPrice === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+    <button class="sort-btn" [class.active]="sortName !== ''" (click)="toggleSortName()">
+      {{ 'clients.company' | translate }}
+      <ion-icon [name]="sortName === 'desc' ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+    </button>
+
+    <div class="date-filters">
+      <ion-input
+        type="date"
+        [(ngModel)]="dateFrom"
+        (ngModelChange)="onDateChange()"
+        class="date-input"
+        [placeholder]="'common.dateFrom' | translate">
+      </ion-input>
+      <span class="date-sep">→</span>
+      <ion-input
+        type="date"
+        [(ngModel)]="dateTo"
+        (ngModelChange)="onDateChange()"
+        class="date-input"
+        [placeholder]="'common.dateTo' | translate">
+      </ion-input>
+      <ion-button *ngIf="dateFrom || dateTo" fill="clear" size="small" (click)="clearDates()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="skeleton-list">
+    <ion-item *ngFor="let i of [1,2,3,4,5]">
+      <ion-skeleton-text animated style="width:70%"></ion-skeleton-text>
+    </ion-item>
+  </div>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let invoice of displayed" class="invoice-item" detail="false" (click)="router.navigate(['/invoices', invoice._id])">
+      <ion-label>
+        <h3>
+          <strong class="invoice-num">{{ invoice.numero }}</strong>
+          <span class="type-chip" [class.is-facture]="invoice.type === 'facture'">
+            {{ typeLabel(invoice.type) }}
+          </span>
+        </h3>
+        <p>{{ $any(invoice.client_id)?.company || invoice.code_client }}</p>
+        <p class="text-muted">{{ invoice.date | date:'dd/MM/yyyy' }}</p>
+      </ion-label>
+      <div slot="end" class="invoice-end">
+        <span class="amount">{{ invoice.total_ttc | number:'1.2-2' }} MAD</span>
+        <div class="row-actions">
+          <ion-button fill="clear" size="small" color="danger" (click)="$event.stopPropagation(); confirmDelete(invoice)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-item>
+
+    <ion-item *ngIf="displayed.length === 0">
+      <ion-label class="ion-text-center text-muted">{{ 'common.noData' | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+</div>

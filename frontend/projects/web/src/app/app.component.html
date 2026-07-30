@@ -1,0 +1,4 @@
+<div *ngIf="isOffline" class="offline-banner">{{ 'offline' | translate }}</div>
+<router-outlet></router-outlet>
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>

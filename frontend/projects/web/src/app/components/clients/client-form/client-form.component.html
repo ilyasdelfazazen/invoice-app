@@ -1,0 +1,48 @@
+<div class="page">
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text" (click)="router.navigate(['/clients'])"></button>
+    <h2>{{ (isEdit ? 'common.edit' : 'clients.new') | translate }}</h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
+    <div class="form-grid">
+      <div class="field">
+        <label>{{ 'clients.name' | translate }} *</label>
+        <input pInputText formControlName="name" class="w-full" />
+      </div>
+      <div class="field">
+        <label>{{ 'clients.company' | translate }}</label>
+        <input pInputText formControlName="company" class="w-full" />
+      </div>
+      <div class="field">
+        <label>{{ 'clients.ice' | translate }}</label>
+        <input pInputText formControlName="ice" class="w-full" />
+      </div>
+      <div class="field">
+        <label>{{ 'clients.codeClient' | translate }}</label>
+        <input pInputText formControlName="code_client" class="w-full" />
+      </div>
+      <div class="field">
+        <label>{{ 'clients.city' | translate }}</label>
+        <input pInputText formControlName="city" class="w-full" />
+      </div>
+      <div class="field">
+        <label>{{ 'clients.phone' | translate }}</label>
+        <input pInputText formControlName="phone" class="w-full" />
+      </div>
+      <div class="field">
+        <label>{{ 'clients.email' | translate }}</label>
+        <input pInputText formControlName="email" class="w-full" />
+      </div>
+      <div class="field col-span-2">
+        <label>{{ 'clients.address' | translate }}</label>
+        <input pInputText formControlName="address" class="w-full" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button pButton type="button" [label]="'common.cancel' | translate" class="p-button-text" (click)="router.navigate(['/clients'])"></button>
+      <button pButton type="submit" [label]="'common.save' | translate" [loading]="loading" [disabled]="form.invalid || loading"></button>
+    </div>
+  </form>
+</div>

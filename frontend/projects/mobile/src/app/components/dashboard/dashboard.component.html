@@ -1,0 +1,109 @@
+<div class="page dashboard">
+
+  <div class="page-header">
+    <h2>{{ 'dashboard.title' | translate }}</h2>
+    <span *ngIf="lastLogin" class="last-login">
+      <ion-icon name="time-outline"></ion-icon>
+      {{ 'dashboard.lastLogin' | translate }}: {{ lastLogin }}
+    </span>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-grid">
+
+    <div class="kpi-card accent-primary">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'dashboard.totalInvoices' | translate }}</span>
+        <div class="kpi-icon accent-primary"><ion-icon name="document-text-outline"></ion-icon></div>
+      </div>
+      <div class="kpi-value">{{ data.stats.totalInvoices }}</div>
+      <div class="kpi-pills">
+        <span class="pill pill-success">{{ data.stats.totalFacture }} {{ 'invoices.typeFacture' | translate }}</span>
+        <span class="pill pill-muted">{{ data.stats.totalProforma }} {{ 'invoices.typeProforma' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card accent-success">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'dashboard.revenue' | translate }}</span>
+        <div class="kpi-icon accent-success"><ion-icon name="trending-up-outline"></ion-icon></div>
+      </div>
+      <div class="kpi-value kpi-value--md">
+        {{ data.stats.revenue | number:'1.2-2' }}<span class="kpi-unit"> MAD</span>
+      </div>
+      <div class="kpi-sub">{{ data.stats.revenueProforma | number:'1.2-2' }} MAD {{ 'invoices.typeProforma' | translate | lowercase }}</div>
+    </div>
+
+    <div class="kpi-card accent-warning">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'invoices.typeFacture' | translate }}</span>
+        <div class="kpi-icon accent-warning"><ion-icon name="document-outline"></ion-icon></div>
+      </div>
+      <div class="kpi-value">{{ data.stats.totalFacture }}</div>
+      <div class="kpi-sub">{{ 'invoices.typeProforma' | translate }}: {{ data.stats.totalProforma }}</div>
+    </div>
+
+    <div class="kpi-card accent-info">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'dashboard.openOperations' | translate }}</span>
+        <div class="kpi-icon accent-info"><ion-icon name="wallet-outline"></ion-icon></div>
+      </div>
+      <div class="kpi-value kpi-value--md">
+        {{ openTotal | number:'1.2-2' }}<span class="kpi-unit"> MAD</span>
+      </div>
+      <div class="kpi-sub">{{ paidTotal | number:'1.2-2' }} MAD {{ 'operations.status_paid' | translate | lowercase }}</div>
+    </div>
+
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">{{ 'nav.invoices' | translate }}</span>
+        <div class="chart-legend-row">
+          <span class="legend-dot" style="background:#0EA5E9"></span>{{ 'invoices.typeFacture' | translate }}
+          <span class="legend-dot" style="background:#F97316"></span>{{ 'invoices.typeProforma' | translate }}
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas #typeChart></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">{{ 'dashboard.operationsChart' | translate }}</span>
+        <div class="chart-legend-row">
+          <span class="legend-dot" style="background:#F59E0B"></span>{{ 'operations.status_open' | translate }}
+          <span class="legend-dot" style="background:#22C55E"></span>{{ 'operations.status_paid' | translate }}
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas #opsChart></canvas></div>
+    </div>
+
+  </div>
+
+  <!-- Quick Access -->
+  <div class="quick-card">
+    <span class="chart-title">{{ 'dashboard.quickAccess' | translate }}</span>
+    <div class="quick-actions">
+      <ion-button fill="outline" (click)="router.navigate(['/invoices/new'])">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'invoices.newInvoice' | translate }}
+      </ion-button>
+      <ion-button fill="outline" color="warning" (click)="router.navigate(['/operations/new'])">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ 'operations.newOperation' | translate }}
+      </ion-button>
+      <ion-button fill="outline" color="tertiary" (click)="router.navigate(['/clients/new'])">
+        <ion-icon slot="start" name="person-add-outline"></ion-icon>
+        {{ 'clients.new' | translate }}
+      </ion-button>
+      <ion-button fill="outline" color="success" (click)="router.navigate(['/products/new'])">
+        <ion-icon slot="start" name="cube-outline"></ion-icon>
+        {{ 'products.newProduct' | translate }}
+      </ion-button>
+    </div>
+  </div>
+
+</div>

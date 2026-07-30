@@ -1,0 +1,109 @@
+<div class="page dashboard">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h2>{{ 'dashboard.title' | translate }}</h2>
+    <span *ngIf="lastLogin" class="last-login">
+      <i class="pi pi-clock"></i>
+      {{ 'dashboard.lastLogin' | translate }}: {{ lastLogin }}
+    </span>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-grid">
+
+    <div class="kpi-card accent-primary">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'dashboard.totalInvoices' | translate }}</span>
+        <div class="kpi-icon accent-primary"><i class="pi pi-file-edit"></i></div>
+      </div>
+      <div class="kpi-value">{{ data.stats.totalInvoices }}</div>
+      <div class="kpi-pills">
+        <span class="pill pill-success">{{ data.stats.totalFacture }} {{ 'invoices.typeFacture' | translate }}</span>
+        <span class="pill pill-muted">{{ data.stats.totalProforma }} {{ 'invoices.typeProforma' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card accent-success">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'dashboard.revenue' | translate }}</span>
+        <div class="kpi-icon accent-success"><i class="pi pi-chart-line"></i></div>
+      </div>
+      <div class="kpi-value kpi-value--md">
+        {{ data.stats.revenue | number:'1.2-2' }}<span class="kpi-unit"> MAD</span>
+      </div>
+      <div class="kpi-sub">{{ data.stats.revenueProforma | number:'1.2-2' }} MAD {{ 'invoices.typeProforma' | translate | lowercase }}</div>
+    </div>
+
+    <div class="kpi-card accent-warning">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'invoices.typeFacture' | translate }}</span>
+        <div class="kpi-icon accent-warning"><i class="pi pi-file"></i></div>
+      </div>
+      <div class="kpi-value">{{ data.stats.totalFacture }}</div>
+      <div class="kpi-sub">{{ 'invoices.typeProforma' | translate }}: {{ data.stats.totalProforma }}</div>
+    </div>
+
+    <div class="kpi-card accent-info">
+      <div class="kpi-top">
+        <span class="kpi-label">{{ 'dashboard.openOperations' | translate }}</span>
+        <div class="kpi-icon accent-info"><i class="pi pi-wallet"></i></div>
+      </div>
+      <div class="kpi-value kpi-value--md">
+        {{ openTotal | number:'1.2-2' }}<span class="kpi-unit"> MAD</span>
+      </div>
+      <div class="kpi-sub">{{ paidTotal | number:'1.2-2' }} MAD {{ 'operations.status_paid' | translate | lowercase }}</div>
+    </div>
+
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">{{ 'nav.invoices' | translate }}</span>
+        <div class="chart-legend-row">
+          <span class="legend-dot" style="background:#0EA5E9"></span>{{ 'invoices.typeFacture' | translate }}
+          <span class="legend-dot" style="background:#F97316"></span>{{ 'invoices.typeProforma' | translate }}
+        </div>
+      </div>
+      <p-chart type="doughnut" [data]="typeChartData" [options]="typeChartOptions" height="240"></p-chart>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">{{ 'dashboard.operationsChart' | translate }}</span>
+        <div class="chart-legend-row">
+          <span class="legend-dot" style="background:#F59E0B"></span>{{ 'operations.status_open' | translate }}
+          <span class="legend-dot" style="background:#22C55E"></span>{{ 'operations.status_paid' | translate }}
+        </div>
+      </div>
+      <p-chart type="doughnut" [data]="operationsChartData" [options]="operationsChartOptions" height="240"></p-chart>
+    </div>
+
+    <div class="quick-card">
+      <span class="chart-title">{{ 'dashboard.quickAccess' | translate }}</span>
+      <div class="quick-actions">
+        <a class="quick-btn" routerLink="/invoices/new">
+          <div class="quick-btn-icon primary"><i class="pi pi-file-plus"></i></div>
+          <span>{{ 'invoices.newInvoice' | translate }}</span>
+        </a>
+        <a class="quick-btn" routerLink="/operations/new">
+          <div class="quick-btn-icon warning"><i class="pi pi-plus-circle"></i></div>
+          <span>{{ 'operations.newOperation' | translate }}</span>
+        </a>
+        <a class="quick-btn" routerLink="/clients/new">
+          <div class="quick-btn-icon info"><i class="pi pi-user-plus"></i></div>
+          <span>{{ 'clients.new' | translate }}</span>
+        </a>
+        <a class="quick-btn" routerLink="/products/new">
+          <div class="quick-btn-icon success"><i class="pi pi-box"></i></div>
+          <span>{{ 'products.newProduct' | translate }}</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
