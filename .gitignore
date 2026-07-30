@@ -9,6 +9,15 @@ dist/
 # but ignore any local overrides
 *.local.ts
 
+# dotenv files (real secrets — .env.example stays tracked)
+.env
+.env.production
+backend/.env
+backend/.env.production
+
+# Docker Compose bind-mounted Mongo data
+/data/
+
 # Claude Code
 .claude/
 
